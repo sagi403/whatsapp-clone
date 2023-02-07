@@ -6,8 +6,8 @@ const WebScreen = () => {
   return (
     <>
       <div className="container mx-auto h-screen">
-        <div className="flex h-full">
-          <div className="w-1/4 bg-gray-200 p-4">
+        <div className="flex">
+          <div className="w-1/4 bg-gray-200 p-4 h-screen">
             <ul className="list-none p-0">
               <ContactList />
               <ContactList />
@@ -15,10 +15,10 @@ const WebScreen = () => {
               <ContactList />
             </ul>
           </div>
-          <div className="w-3/4">
-            <div className="flex flex-col">
+          <div className="w-3/4 h-screen">
+            <div className="flex flex-col h-full">
               {/* User headline */}
-              <div className="flex p-4">
+              <div className="flex p-4 bg-gray-200">
                 <img
                   src="https://via.placeholder.com/50x50"
                   alt="Sender Avatar"
@@ -30,8 +30,8 @@ const WebScreen = () => {
                 </div>
               </div>
               {/* Chat */}
-              {/* <div className="h-64 overflow-auto bg-lime-50"> */}
-              <div className="container mx-auto p-4 bg-orange-50">
+              {/* <div className="overflow-auto bg-lime-50"> */}
+              <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
                 <MyMessage />
                 <MyMessage />
                 <MyMessage />
@@ -41,6 +41,17 @@ const WebScreen = () => {
                 <MyMessage />
               </div>
               {/* </div> */}
+              {/* Input message */}
+              <div className="flex p-3 bg-gray-200">
+                <input
+                  type="text"
+                  className="border border-gray-400 p-2 w-full rounded-lg"
+                  placeholder="Type a message..."
+                />
+                <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+                  Send
+                </button>
+              </div>
             </div>
           </div>
         </div>
