@@ -1,8 +1,10 @@
+import { useState } from "react";
 import ContactList from "../components/ContactList";
 import MyMessage from "../components/MyMessage";
 import OtherMessage from "../components/OthersMessage";
 
 const WebScreen = () => {
+  const [message, setMessage] = useState("");
   return (
     <>
       <div className="container mx-auto h-screen">
@@ -30,7 +32,6 @@ const WebScreen = () => {
                 </div>
               </div>
               {/* Chat */}
-              {/* <div className="overflow-auto bg-lime-50"> */}
               <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
                 <MyMessage />
                 <MyMessage />
@@ -40,13 +41,14 @@ const WebScreen = () => {
                 <OtherMessage />
                 <MyMessage />
               </div>
-              {/* </div> */}
               {/* Input message */}
               <div className="flex p-3 bg-gray-200">
                 <input
                   type="text"
                   className="border border-gray-400 p-2 w-full rounded-lg"
                   placeholder="Type a message..."
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
                 />
                 <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
                   Send
