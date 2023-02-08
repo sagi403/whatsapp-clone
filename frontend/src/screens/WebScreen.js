@@ -1,7 +1,6 @@
 import { useState } from "react";
-import ContactList from "../components/ContactList";
-import MyMessage from "../components/MyMessage";
-import OtherMessage from "../components/OthersMessage";
+import Contact from "../components/Contact";
+import Message from "../components/Message";
 import { contacts } from "../data/contacts";
 import UserHeader from "../components/UserHeader";
 
@@ -11,52 +10,51 @@ const WebScreen = () => {
 
   return (
     <>
-      <div className="container mx-auto h-screen">
-        <div className="flex">
-          <div className="w-1/4 bg-gray-200 p-4 h-screen">
-            <ul className="list-none p-0">
-              {contacts.map(contact => (
-                <ContactList
-                  name={contact.name}
-                  lastMessage={contact.lastMessage}
-                  image={contact.image}
-                  key={contact.id}
-                  onClick={() => setCurrentDialog(contact)}
-                />
-              ))}
-            </ul>
-          </div>
-          <div className="w-3/4 h-screen">
-            <div className="flex flex-col h-full">
-              {/* User headline */}
-              <UserHeader
-                name={currentDialog.name}
-                lastConnected={currentDialog.lastConnected}
-                image={currentDialog.image}
+      <div className="container mx-auto h-screen flex">
+        <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 p-4 h-screen">
+          <ul className="list-none p-0">
+            {contacts.map(contact => (
+              <Contact
+                name={contact.name}
+                lastMessage={contact.lastMessage}
+                receivedAt={contact.receivedAt}
+                image={contact.image}
+                key={contact.id}
+                onClick={() => setCurrentDialog(contact)}
               />
-              {/* Chat */}
-              <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
-                <MyMessage />
-                <MyMessage />
-                <MyMessage />
-                <OtherMessage />
-                <OtherMessage />
-                <OtherMessage />
-                <MyMessage />
-              </div>
-              {/* Input message */}
-              <div className="flex p-3 bg-gray-200">
-                <input
-                  type="text"
-                  className="border border-gray-400 p-2 w-full rounded-lg"
-                  placeholder="Type a message..."
-                  value={message}
-                  onChange={e => setMessage(e.target.value)}
-                />
-                <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
-                  Send
-                </button>
-              </div>
+            ))}
+          </ul>
+        </div>
+        <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
+          <div className="flex flex-col h-full">
+            {/* User headline */}
+            <UserHeader
+              name={currentDialog.name}
+              lastConnected={currentDialog.lastConnected}
+              image={currentDialog.image}
+            />
+            {/* Chat */}
+            <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
+              <Message />
+              <Message />
+              <Message own={true} />
+              <Message />
+              <Message own={true} />
+              <Message own={true} />
+              <Message />
+            </div>
+            {/* Input message */}
+            <div className="flex p-3 bg-gray-200">
+              <input
+                type="text"
+                className="border border-gray-400 p-2 w-full rounded-lg"
+                placeholder="Type a message..."
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+              />
+              <button className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+                Send
+              </button>
             </div>
           </div>
         </div>
