@@ -11,7 +11,7 @@ const WebScreen = () => {
   return (
     <>
       <div className="container mx-auto h-screen flex">
-        <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 p-4 h-screen">
+        <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 h-screen">
           <ul className="list-none p-0">
             {contacts.map(contact => (
               <Contact
@@ -20,6 +20,7 @@ const WebScreen = () => {
                 receivedAt={contact.receivedAt}
                 image={contact.image}
                 key={contact.id}
+                active={currentDialog.id === contact.id}
                 onClick={() => setCurrentDialog(contact)}
               />
             ))}
