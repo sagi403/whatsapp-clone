@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Contact from "../components/Contact";
 import Message from "../components/Message";
 import { contacts } from "../data/contacts";
 import UserHeader from "../components/UserHeader";
+import { io } from "socket.io-client";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
   const [currentDialog, setCurrentDialog] = useState(contacts[0]);
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io("ws://localhost:8000");
+  }, []);
 
   return (
     <>
