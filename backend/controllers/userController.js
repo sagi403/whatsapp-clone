@@ -26,4 +26,24 @@ const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true });
 });
 
-export { registerUser };
+// @desc    Login user & get token
+// @route   POST /api/users/login
+// @access  Public
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user && (await user.matchPassword(password))) {
+    req.session = {
+      jwt: generateToken({ id: user.id, isAdmin: user.isAdmin }),
+    };
+
+    res.json({ success: true });
+  } else {
+    res.status(400);
+    throw new Error("Invalid email or password");
+  }
+});
+
+export { registerUser, loginUser };
