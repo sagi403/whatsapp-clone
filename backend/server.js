@@ -4,11 +4,19 @@ import { keys, checkEnvVariables } from "./keys.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+import cookieSession from "cookie-session";
 
 const app = express();
 
 app.use(helmet());
 app.use(express.json());
+app.set("trust proxy", true);
+app.use(
+  cookieSession({
+    signed: false,
+    secure: false,
+  })
+);
 
 checkEnvVariables(keys);
 connectDB();
