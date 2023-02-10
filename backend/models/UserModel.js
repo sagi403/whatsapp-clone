@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
     avatarColors: {
       type: Array,
       required: true,
+      default: ["#000000", "#000000", "#000000", "#000000", "#000000"],
     },
   },
   {
