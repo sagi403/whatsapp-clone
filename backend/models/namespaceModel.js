@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
+import { roomSchema } from "./roomModel.js";
 
-const messageSchema = new mongoose.Schema(
+const namespaceSchema = new mongoose.Schema(
   {
-    sender: {
+    nsTitle: {
       type: String,
       required: true,
     },
-    text: {
+    endpoint: {
       type: String,
       required: true,
     },
+    rooms: [roomSchema],
   },
   {
     timestamps: true,
@@ -22,8 +24,6 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-const Message = mongoose.model("Message", messageSchema);
+const Namespace = mongoose.model("Namespace", namespaceSchema);
 
-export default Message;
-
-export { messageSchema };
+export default Namespace;

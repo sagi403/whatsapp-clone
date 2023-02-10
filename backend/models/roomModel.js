@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
+import { messageSchema } from "./messageModel.js";
 
-const messageSchema = new mongoose.Schema(
+const roomSchema = new mongoose.Schema(
   {
-    sender: {
+    roomTitle: {
       type: String,
       required: true,
     },
-    text: {
+    namespace: {
       type: String,
       required: true,
     },
+    conversationHistory: [messageSchema],
   },
   {
     timestamps: true,
@@ -22,8 +24,8 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
-const Message = mongoose.model("Message", messageSchema);
+const Room = mongoose.model("Room", roomSchema);
 
-export default Message;
+export default Room;
 
-export { messageSchema };
+export { roomSchema };
