@@ -1,20 +1,33 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { fetchCookie } from "../fetchers/loginCookie";
+import { fetchProfile } from "../fetchers/userProfile";
 
 export const useUser = () => {
+  const [userError, setUserError] = useState(null);
   const { user, setUser } = useContext(AuthContext);
-  const { setItem } = useLocalStorage();
 
-  const addUser = user => {
-    setUser(user);
-    setItem("user", JSON.stringify(user));
+  const addUser = async user => {
+    try {
+      await fetchCookie(user);
+      checkUser();
+    } catch (error) {
+      setUserError(error);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+      const user = await fetchProfile();
+      setUser(user);
+    } catch (error) {
+      setUserError(error);
+    }
   };
 
   const removeUser = () => {
     setUser(null);
-    setItem("user", "");
   };
 
-  return { user, setUser, addUser, removeUser };
+  return { user, setUser, addUser, userError, setUserError, removeUser };
 };
