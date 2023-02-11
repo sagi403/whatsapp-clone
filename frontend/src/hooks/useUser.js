@@ -16,5 +16,5 @@ export const useUser = () => {
     setItem("user", "");
   };
 
-  return { user, addUser, removeUser };
+  return { user, setUser, addUser, removeUser };
 };

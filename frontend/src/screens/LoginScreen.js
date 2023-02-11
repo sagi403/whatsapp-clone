@@ -1,8 +1,21 @@
+import { Link } from "react-router-dom";
 import FormInputItem from "../components/FormInputItem";
 import SvgItem from "../components/SvgItem";
 import { anotherUserSvg, emailSvg, nextSvg, passwordSvg } from "../data/svg";
+import { useAuth } from "../hooks/useAuth";
+import { useState } from "react";
 
 const LoginScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { login } = useAuth();
+
+  const submitHandler = e => {
+    e.preventDefault();
+    login({ email, password });
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-300">
@@ -12,18 +25,22 @@ const LoginScreen = () => {
           </div>
 
           <div className="mt-10">
-            <form>
+            <form onSubmit={submitHandler}>
               <FormInputItem
                 type="email"
                 id="email"
                 placeholder="E-Mail Address"
                 icon={emailSvg}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
               />
               <FormInputItem
                 type="password"
                 id="password"
                 placeholder="Password"
                 icon={passwordSvg}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
               />
               <div className="flex items-center mb-6 -mt-4">
                 <div className="flex ml-auto">

@@ -1,6 +1,6 @@
 import SvgItem from "./SvgItem";
 
-const FormInputItem = ({ type, id, placeholder, icon }) => {
+const FormInputItem = ({ type, id, placeholder, icon, value, onChange }) => {
   return (
     <div className={`flex flex-col mb-6`}>
       <label
@@ -18,6 +18,8 @@ const FormInputItem = ({ type, id, placeholder, icon }) => {
           id={id}
           type={type}
           name={id}
+          value={value}
+          onChange={onChange}
           className="text-sm sm:text-base placeholder-gray-500 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
           placeholder={placeholder}
         />
