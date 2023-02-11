@@ -46,4 +46,13 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser };
+// @desc    Get user profile
+// @route   GET /api/users/profile
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  const { id, username, email, isAdmin } = req.user;
+
+  res.json({ id, username, email, isAdmin });
+});
+
+export { registerUser, loginUser, getUserProfile };
