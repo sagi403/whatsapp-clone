@@ -56,4 +56,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
   res.json({ id, username, email, isAdmin });
 });
 
-export { registerUser, loginUser, getUserProfile };
+// @desc    Logout user
+// @route   POST /api/users/logout
+// @access  Public
+const logoutUser = asyncHandler(async (req, res) => {
+  req.session = null;
+
+  res.send({ success: true });
+});
+
+export { registerUser, loginUser, getUserProfile, logoutUser };
