@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import Contact from "../components/Contact";
-import Message from "../components/Message";
-import { contacts } from "../data/contacts";
-import UserHeader from "../components/UserHeader";
+import Contact from "../base/Contact";
+import Message from "../base/Message";
+import { contacts } from "../../data/contacts";
+import UserHeader from "../base/UserHeader";
 import { io } from "socket.io-client";
 
 const user = {

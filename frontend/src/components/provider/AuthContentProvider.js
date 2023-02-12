@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { getCurrentUser } from "../fetchers/getCurrentUser";
-import { loginUser } from "../fetchers/loginUser";
+import { getCurrentUser } from "../../fetchers/getCurrentUser";
+import { loginUser } from "../../fetchers/loginUser";
 import { AuthContext } from "../context/AuthContext";
 
 const AuthContentProvider = ({ children }) => {

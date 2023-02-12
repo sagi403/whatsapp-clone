@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import { io } from "socket.io-client";
-import LoginScreen from "./screens/LoginScreen";
-import WebScreen from "./screens/WebScreen";
-import AuthContentProvider from "./provider/AuthContentProvider";
-import RequireAuth from "./components/RequireAuth";
+import LoginScreen from "./components/screens/LoginScreen";
+import WebScreen from "./components/screens/WebScreen";
+import AuthContentProvider from "./components/provider/AuthContentProvider";
+import RequireAuth from "./components/auth/RequireAuth";
 
 // const socket = io("ws://localhost:5000");
 

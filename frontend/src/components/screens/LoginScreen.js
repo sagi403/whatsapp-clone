@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import FormInputItem from "../components/FormInputItem";
-import SvgItem from "../components/SvgItem";
-import { anotherUserSvg, emailSvg, nextSvg, passwordSvg } from "../data/svg";
-import { useAuth } from "../hooks/useAuth";
+import FormInputItem from "../base/FormInputItem";
+import SvgItem from "../base/SvgItem";
+import { anotherUserSvg, emailSvg, nextSvg, passwordSvg } from "../../data/svg";
+import { useAuth } from "../../hooks/useAuth";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
