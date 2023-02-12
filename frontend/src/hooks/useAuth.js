@@ -1,15 +1,6 @@
-import { useUser } from "./useUser";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export const useAuth = () => {
-  const { user, setUser, addUser, removeUser } = useUser();
-
-  const login = user => {
-    addUser(user);
-  };
-
-  const logout = () => {
-    removeUser();
-  };
-
-  return { user, setUser, login, logout };
+  return useContext(AuthContext);
 };

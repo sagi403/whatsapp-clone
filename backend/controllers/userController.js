@@ -38,8 +38,9 @@ const loginUser = asyncHandler(async (req, res) => {
     req.session = {
       jwt: generateToken({ id: user.id, isAdmin: user.isAdmin }),
     };
+    const { id, username, isAdmin } = user;
 
-    res.json({ success: true });
+    res.json({ id, username, email, isAdmin });
   } else {
     res.status(400);
     throw new Error("Invalid email or password");

@@ -1,15 +1,23 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import FormInputItem from "../components/FormInputItem";
 import SvgItem from "../components/SvgItem";
 import { anotherUserSvg, emailSvg, nextSvg, passwordSvg } from "../data/svg";
 import { useAuth } from "../hooks/useAuth";
-import { useState } from "react";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const { user, login } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/web");
+    }
+  }, [user]);
 
   const submitHandler = e => {
     e.preventDefault();

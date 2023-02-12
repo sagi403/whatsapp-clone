@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const fetchProfile = async () => {
+export const getCurrentUser = async () => {
   try {
     const { data } = await axios.get("/api/users/profile");
     return data;
