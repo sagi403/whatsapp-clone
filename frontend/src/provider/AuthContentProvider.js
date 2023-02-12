@@ -31,10 +31,7 @@ const AuthContentProvider = ({ children }) => {
     loginUser({ email, password })
       .then(user => setUser(user))
       .catch(error => setError(error))
-      .finally(() => {
-        setLoading(false);
-        setLoadingInitial(false);
-      });
+      .finally(() => setLoading(false));
   };
 
   const memoedValue = useMemo(

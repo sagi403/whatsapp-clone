@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginScreen from "./screens/LoginScreen";
 import WebScreen from "./screens/WebScreen";
 import AuthContentProvider from "./provider/AuthContentProvider";
+import RequireAuth from "./components/RequireAuth";
 
 // const socket = io("ws://localhost:5000");
 
@@ -12,7 +13,9 @@ const App = () => {
       <AuthContentProvider>
         <Routes>
           <Route path="/" element={<LoginScreen />} />
-          <Route path="/web" element={<WebScreen />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/web" element={<WebScreen />} />
+          </Route>
         </Routes>
       </AuthContentProvider>
     </Router>
