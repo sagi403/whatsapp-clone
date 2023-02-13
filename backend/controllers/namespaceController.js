@@ -59,28 +59,19 @@ const addNamespaceRoom = asyncHandler(async (req, res) => {
   res.status(201).json({ message: "Room added successfully" });
 });
 
-// @desc    Get all namespace rooms
-// @route   GET /api/namespaces/rooms
+// @desc    Fetch namespace details
+// @route   GET /api/namespaces
 // @access  Private
 const getNamespaceRooms = asyncHandler(async (req, res) => {
-  const user = req.user;
+  const { username } = req.user;
 
-  const userExists = await Namespace.find({ email });
+  const ns = await Namespace.find({ nsTitle: username });
 
-  if (userExists) {
+  if (!ns) {
     res.status(400);
-    throw new Error("User already exists");
+    throw new Error("Namespace not found");
   }
-
-  // const user = await User.create({
-  //   username,
-  //   email,
-  //   password,
-  // });
-
-  // req.session = { jwt: generateToken({ id: user.id, isAdmin: user.isAdmin }) };
-
-  // res.status(201).json({ success: true });
+  res.json({ ns });
 });
 
 export { createNamespace, addNamespaceRoom, getNamespaceRooms };

@@ -8,8 +8,7 @@ import {
 
 const router = express.Router();
 
-router.get("/rooms", protect, getNamespaceRooms);
-router.route("/").post(createNamespace);
+router.route("/").post(createNamespace).get(protect, getNamespaceRooms);
 router.route("/room").post(protect, addNamespaceRoom);
 
 export default router;
