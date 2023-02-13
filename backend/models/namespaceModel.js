@@ -11,7 +11,10 @@ const namespaceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    rooms: [roomSchema],
+    rooms: {
+      type: Array,
+      required: true,
+    },
   },
   {
     timestamps: true,

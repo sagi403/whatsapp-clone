@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Namespace from "../models/namespaceModel.js";
 import User from "../models/userModel.js";
+import Room from "../models/roomModel.js";
 
 // @desc    Create new namespace
 // @route   POST /api/namespaces
@@ -41,17 +42,17 @@ const addNamespaceRoom = asyncHandler(async (req, res) => {
     throw new Error("Namespace not found");
   }
 
-  const roomAlreadyAdded = ns.rooms.find(r => r.roomTitle === roomTitle);
+  const roomAlreadyAdded = ns.rooms.find(room => room === roomTitle);
 
   if (roomAlreadyAdded) {
     res.status(400);
     throw new Error("Room already added");
   }
 
-  const room = {
+  const { roomTitle: room } = await Room.create({
     roomTitle,
     namespace: username,
-  };
+  });
 
   ns.rooms.push(room);
   await ns.save();
@@ -62,7 +63,10 @@ const addNamespaceRoom = asyncHandler(async (req, res) => {
 // @desc    Fetch namespace details
 // @route   GET /api/namespaces
 // @access  Private
-const getNamespaceRooms = asyncHandler(async (req, res) => {
+const getNamespace = asyncHandler(async (req, res) => {
+  // #######################################
+  // Need to change to fetch rooms instead of namespace
+  // #######################################
   const { username } = req.user;
 
   const ns = await Namespace.find({ nsTitle: username });
@@ -71,7 +75,30 @@ const getNamespaceRooms = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Namespace not found");
   }
+
   res.json({ ns });
 });
 
-export { createNamespace, addNamespaceRoom, getNamespaceRooms };
+// @desc    Add message to room
+// @route   POST /api/namespaces/message
+// @access  Private
+const addMessage = asyncHandler(async (req, res) => {
+  const { receiver, text } = req.body;
+  const { username } = req.user;
+
+  const room = await Room.findOne({ roomTitle: receiver, namespace: username });
+
+  if (!room) {
+    res.status(400);
+    throw new Error("Room not found");
+  }
+
+  const message = { receiver, text };
+
+  room.conversationHistory.push(message);
+  await room.save();
+
+  res.json({ message: "Message added successfully" });
+});
+
+export { createNamespace, addNamespaceRoom, getNamespace, addMessage };
