@@ -15,6 +15,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("User already exists");
   }
 
+  const usernameExists = await User.findOne({ username });
+
+  if (usernameExists) {
+    res.status(400);
+    throw new Error("Username already exists");
+  }
+
   const user = await User.create({
     username,
     email,
@@ -23,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   req.session = { jwt: generateToken({ id: user.id, isAdmin: user.isAdmin }) };
 
-  res.status(201).json({ success: true });
+  res.status(201).json({ id: user.id });
 });
 
 // @desc    Login user & get token

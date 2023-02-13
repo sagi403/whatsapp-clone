@@ -3,6 +3,7 @@ import helmet from "helmet";
 import { keys, checkEnvVariables } from "./keys.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import namespaceRoutes from "./routes/namespaceRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import cookieSession from "cookie-session";
 
@@ -22,6 +23,7 @@ checkEnvVariables(keys);
 connectDB();
 
 app.use("/api/users", userRoutes);
+app.use("/api/namespaces", namespaceRoutes);
 
 const PORT = keys.port || 5000;
 
