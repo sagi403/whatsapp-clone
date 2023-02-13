@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Namespace from "../models/namespaceModel.js";
+import User from "../models/userModel.js";
 
 // @desc    Create new namespace
 // @route   POST /api/namespaces
@@ -14,7 +15,33 @@ const createNamespace = asyncHandler(async (req, res) => {
     throw new Error("Namespace title already exists");
   }
 
+  const userExists = await User.findById(userId);
+
+  if (!userExists) {
+    res.status(400);
+    throw new Error("User doesn't exists");
+  }
+
   await Namespace.create({ nsTitle, endpoint: `/${userId}` });
+
+  res.status(201).json({ success: true });
+});
+
+// @desc    Add room to namespace
+// @route   PATCH /api/namespaces
+// @access  Private
+const addNamespaceRoom = asyncHandler(async (req, res) => {
+  const { nsTitle } = req.body;
+  const user = req.user;
+
+  const nsExists = await Namespace.findOne({ nsTitle });
+
+  // if (nsExists) {
+  //   res.status(400);
+  //   throw new Error("Namespace title already exists");
+  // }
+
+  // await Namespace.create({ nsTitle, endpoint: `/${userId}` });
 
   res.status(201).json({ success: true });
 });
@@ -24,13 +51,13 @@ const createNamespace = asyncHandler(async (req, res) => {
 // @access  Private
 const getNamespaceRooms = asyncHandler(async (req, res) => {
   const user = req.user;
-  console.log(user);
-  // const userExists = await Namespace.findOne({ email });
 
-  // if (userExists) {
-  //   res.status(400);
-  //   throw new Error("User already exists");
-  // }
+  const userExists = await Namespace.find({ email });
+
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
 
   // const user = await User.create({
   //   username,
@@ -43,4 +70,4 @@ const getNamespaceRooms = asyncHandler(async (req, res) => {
   // res.status(201).json({ success: true });
 });
 
-export { createNamespace, getNamespaceRooms };
+export { createNamespace, addNamespaceRoom, getNamespaceRooms };
