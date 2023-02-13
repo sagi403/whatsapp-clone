@@ -4,13 +4,14 @@ import {
   addMessage,
   addNamespaceRoom,
   createNamespace,
-  getNamespace,
+  getNamespaceRooms,
 } from "../controllers/namespaceController.js";
 
 const router = express.Router();
 
-router.route("/").post(createNamespace).get(protect, getNamespace);
+router.route("/").post(createNamespace);
 router.route("/room").post(protect, addNamespaceRoom);
+router.get("/rooms", protect, getNamespaceRooms);
 router.route("/message").post(protect, addMessage);
 
 export default router;

@@ -60,23 +60,20 @@ const addNamespaceRoom = asyncHandler(async (req, res) => {
   res.status(201).json({ message: "Room added successfully" });
 });
 
-// @desc    Fetch namespace details
-// @route   GET /api/namespaces
+// @desc    Fetch namespace rooms
+// @route   GET /api/namespaces/rooms
 // @access  Private
-const getNamespace = asyncHandler(async (req, res) => {
-  // #######################################
-  // Need to change to fetch rooms instead of namespace
-  // #######################################
+const getNamespaceRooms = asyncHandler(async (req, res) => {
   const { username } = req.user;
 
-  const ns = await Namespace.find({ nsTitle: username });
+  const ns = await Namespace.findOne({ nsTitle: username });
 
   if (!ns) {
     res.status(400);
     throw new Error("Namespace not found");
   }
 
-  res.json({ ns });
+  res.json({ rooms: ns.rooms });
 });
 
 // @desc    Add message to room
@@ -101,4 +98,4 @@ const addMessage = asyncHandler(async (req, res) => {
   res.json({ message: "Message added successfully" });
 });
 
-export { createNamespace, addNamespaceRoom, getNamespace, addMessage };
+export { createNamespace, addNamespaceRoom, getNamespaceRooms, addMessage };
