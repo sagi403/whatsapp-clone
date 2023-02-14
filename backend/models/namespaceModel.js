@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { roomSchema } from "./roomModel.js";
 
 const namespaceSchema = new mongoose.Schema(
   {
@@ -9,10 +8,6 @@ const namespaceSchema = new mongoose.Schema(
     },
     endpoint: {
       type: String,
-      required: true,
-    },
-    rooms: {
-      type: Array,
       required: true,
     },
   },

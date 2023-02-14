@@ -4,6 +4,7 @@ import { keys, checkEnvVariables } from "./keys.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import namespaceRoutes from "./routes/namespaceRoutes.js";
+import roomRoutes from "./routes/roomRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import cookieSession from "cookie-session";
 
@@ -24,6 +25,7 @@ connectDB();
 
 app.use("/api/users", userRoutes);
 app.use("/api/namespaces", namespaceRoutes);
+app.use("/api/rooms", roomRoutes);
 
 const PORT = keys.port || 5000;
 

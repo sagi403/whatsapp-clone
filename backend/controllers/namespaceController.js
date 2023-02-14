@@ -1,20 +1,12 @@
 import asyncHandler from "express-async-handler";
 import Namespace from "../models/namespaceModel.js";
 import User from "../models/userModel.js";
-import Room from "../models/roomModel.js";
 
 // @desc    Create new namespace
 // @route   POST /api/namespaces
 // @access  Public
 const createNamespace = asyncHandler(async (req, res) => {
   const { nsTitle, userId } = req.body;
-
-  const nsExists = await Namespace.findOne({ nsTitle });
-
-  if (nsExists) {
-    res.status(400);
-    throw new Error("Namespace title already exists");
-  }
 
   const userExists = await User.findById(userId);
 
@@ -23,79 +15,28 @@ const createNamespace = asyncHandler(async (req, res) => {
     throw new Error("User not exists");
   }
 
+  if (nsTitle !== userExists.username) {
+    res.status(400);
+    throw new Error("Namespace title must match the username");
+  }
+
+  const nsExists1 = await Namespace.findOne({ nsTitle });
+
+  if (nsExists1) {
+    res.status(400);
+    throw new Error("Namespace title already exists");
+  }
+
+  const nsExists2 = await Namespace.findOne({ endpoint: `/${userId}` });
+
+  if (nsExists2 && nsExists2.endpoint === `/${userId}`) {
+    res.status(400);
+    throw new Error("Namespace endpoint already exists");
+  }
+
   await Namespace.create({ nsTitle, endpoint: `/${userId}` });
 
   res.status(201).json({ success: true });
 });
 
-// @desc    Add room to namespace
-// @route   POST /api/namespaces/room
-// @access  Private
-const addNamespaceRoom = asyncHandler(async (req, res) => {
-  const { roomTitle } = req.body;
-  const { username } = req.user;
-
-  const ns = await Namespace.findOne({ nsTitle: username });
-
-  if (!ns) {
-    res.status(400);
-    throw new Error("Namespace not found");
-  }
-
-  const roomAlreadyAdded = ns.rooms.find(room => room === roomTitle);
-
-  if (roomAlreadyAdded) {
-    res.status(400);
-    throw new Error("Room already added");
-  }
-
-  const { roomTitle: room } = await Room.create({
-    roomTitle,
-    namespace: username,
-  });
-
-  ns.rooms.push(room);
-  await ns.save();
-
-  res.status(201).json({ message: "Room added successfully" });
-});
-
-// @desc    Fetch namespace rooms
-// @route   GET /api/namespaces/rooms
-// @access  Private
-const getNamespaceRooms = asyncHandler(async (req, res) => {
-  const { username } = req.user;
-
-  const ns = await Namespace.findOne({ nsTitle: username });
-
-  if (!ns) {
-    res.status(400);
-    throw new Error("Namespace not found");
-  }
-
-  res.json({ rooms: ns.rooms });
-});
-
-// @desc    Add message to room
-// @route   POST /api/namespaces/message
-// @access  Private
-const addMessage = asyncHandler(async (req, res) => {
-  const { receiver, text } = req.body;
-  const { username } = req.user;
-
-  const room = await Room.findOne({ roomTitle: receiver, namespace: username });
-
-  if (!room) {
-    res.status(400);
-    throw new Error("Room not found");
-  }
-
-  const message = { receiver, text };
-
-  room.conversationHistory.push(message);
-  await room.save();
-
-  res.json({ message: "Message added successfully" });
-});
-
-export { createNamespace, addNamespaceRoom, getNamespaceRooms, addMessage };
+export { createNamespace };

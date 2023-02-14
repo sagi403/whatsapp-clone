@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+// import { io } from "socket.io-client";
+import { useQuery } from "@tanstack/react-query";
 import Contact from "../base/Contact";
 import Message from "../base/Message";
 import { contacts } from "../../data/contacts";
 import UserHeader from "../base/UserHeader";
-import { io } from "socket.io-client";
+import { getContactList } from "../../fetchers/getContactList";
 
 const user = {
   name: "Admin",
@@ -16,23 +18,34 @@ const user = {
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
+  const [conversations, setConversations] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState({});
   const [currentDialog, setCurrentDialog] = useState(contacts[0]);
   const socket = useRef();
 
+  const { data, error } = useQuery(["conversations"], getContactList, {
+    staleTime: 60000,
+  });
+
   useEffect(() => {
-    socket.current = io("ws://localhost:8000");
-    socket.current.on("getMessage", data => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
+    // socket.current = io("ws://localhost:8000");
+    // socket.current.on("getMessage", data => {
+    //   setArrivalMessage({
+    //     sender: data.senderId,
+    //     text: data.text,
+    //     createdAt: Date.now(),
+    //   });
+    // });
   }, []);
 
   useEffect(() => {
-    socket.current.emit("addUser", user.id);
+    if (data) {
+      setConversations(data.rooms);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    // socket.current.emit("addUser", user.id);
   }, []);
 
   const handleSubmit = e => {
@@ -44,11 +57,11 @@ const WebScreen = () => {
     };
     const receiverId = currentDialog.id;
 
-    socket.current.emit("sendMessage", {
-      senderId: user.id,
-      receiverId,
-      text: newMessage.text,
-    });
+    // socket.current.emit("sendMessage", {
+    //   senderId: user.id,
+    //   receiverId,
+    //   text: newMessage.text,
+    // });
   };
 
   return (
@@ -56,7 +69,7 @@ const WebScreen = () => {
       <div className="container mx-auto h-screen flex">
         <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 h-screen">
           <ul className="list-none p-0">
-            {contacts.map(contact => (
+            {conversations?.map(contact => (
               <Contact
                 name={contact.name}
                 lastMessage={contact.lastMessage}

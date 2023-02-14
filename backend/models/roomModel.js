@@ -11,6 +11,14 @@ const roomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    lastMessage: {
+      type: String,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
     conversationHistory: [messageSchema],
   },
   {
