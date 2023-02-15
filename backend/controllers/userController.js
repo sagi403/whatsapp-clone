@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import generateAvatar from "../utils/generateAvatar.js";
 
 // @desc    Register a new user
 // @route   POST /api/users/register
@@ -20,6 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password,
+    avatarColors: generateAvatar(),
   });
 
   req.session = { jwt: generateToken({ id: user.id, isAdmin: user.isAdmin }) };
@@ -52,9 +54,9 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  const { id, username, email, isAdmin } = req.user;
+  const { id, username, email, isAdmin, avatarColors } = req.user;
 
-  res.json({ id, username, email, isAdmin });
+  res.json({ id, username, email, isAdmin, avatarColors });
 });
 
 // @desc    Logout user
