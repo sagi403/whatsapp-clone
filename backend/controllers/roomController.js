@@ -47,7 +47,21 @@ const getRooms = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  res.json({ rooms });
+  const contact = rooms.map(room => {
+    return {
+      name: room.roomTitle,
+      lastMessage: room.lastMessage,
+      receivedAt: room.updatedAt.toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      avatar: room.user.avatarColors,
+      id: room.id,
+    };
+  });
+
+  res.json({ contact });
 });
 
 // @desc    Add message to room

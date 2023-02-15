@@ -1,4 +1,13 @@
-const Contact = ({ name, lastMessage, image, onClick, receivedAt, active }) => {
+import UserAvatar from "./UserAvatar";
+
+const Contact = ({
+  name,
+  lastMessage,
+  avatar,
+  onClick,
+  receivedAt,
+  active,
+}) => {
   return (
     <li
       className={`${
@@ -7,11 +16,7 @@ const Contact = ({ name, lastMessage, image, onClick, receivedAt, active }) => {
       onClick={onClick}
     >
       <div className="flex items-center">
-        <img
-          src={image}
-          alt="Contact Avatar"
-          className="mx-2 w-10 h-10 rounded-full"
-        />
+        <UserAvatar name={name} colors={avatar} />
         <div className="h-12 w-full overflow-hidden">
           <p className="font-medium text-lg w-10/12">{name}</p>
           <p className="text-sm text-gray-500 w-11/12">{lastMessage}</p>

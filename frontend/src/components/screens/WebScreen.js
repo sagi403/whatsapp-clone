@@ -40,7 +40,7 @@ const WebScreen = () => {
 
   useEffect(() => {
     if (data) {
-      setConversations(data.rooms);
+      setConversations(data);
     }
   }, [data]);
 
@@ -74,7 +74,7 @@ const WebScreen = () => {
                 name={contact.name}
                 lastMessage={contact.lastMessage}
                 receivedAt={contact.receivedAt}
-                image={contact.image}
+                avatar={contact.avatar}
                 key={contact.id}
                 active={currentDialog.id === contact.id}
                 onClick={() => setCurrentDialog(contact)}
