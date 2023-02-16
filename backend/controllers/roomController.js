@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Room from "../models/roomModel.js";
 import User from "../models/userModel.js";
+import compareDates from "../utils/compareDates.js";
 
 // @desc    Add new room
 // @route   POST /api/rooms
@@ -48,14 +49,12 @@ const getRooms = asyncHandler(async (req, res) => {
   }
 
   const contact = rooms.map(room => {
+    const receivedAt = compareDates(room.updatedAt);
+
     return {
       name: room.roomTitle,
       lastMessage: room.lastMessage,
-      receivedAt: room.updatedAt.toLocaleTimeString("en-US", {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      receivedAt,
       avatar: room.user.avatarColors,
       id: room.id,
     };
