@@ -100,7 +100,7 @@ const addMessage = asyncHandler(async (req, res) => {
 });
 
 // @desc    Fetch all messages from room
-// @route   GET /api/rooms/messages
+// @route   POST /api/rooms/messages
 // @access  Private
 const getMessages = asyncHandler(async (req, res) => {
   const { receiverId } = req.body;

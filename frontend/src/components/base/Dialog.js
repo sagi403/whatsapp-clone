@@ -1,13 +1,6 @@
 import UserAvatar from "./UserAvatar";
 
-const Contact = ({
-  name,
-  lastMessage,
-  avatar,
-  onClick,
-  receivedAt,
-  active,
-}) => {
+const Dialog = ({ name, lastMessage, avatar, onClick, receivedAt, active }) => {
   return (
     <li
       className={`${
@@ -29,4 +22,4 @@ const Contact = ({
   );
 };
 
-export default Contact;
+export default Dialog;

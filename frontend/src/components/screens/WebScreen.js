@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 // import { io } from "socket.io-client";
 import { useQuery } from "@tanstack/react-query";
-import Contact from "../base/Contact";
+import Contact from "../base/Dialog";
 import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { getContactList } from "../../fetchers/getContactList";
 import { useAuth } from "../../hooks/useAuth";
+import { getMessages } from "../../fetchers/getMessages";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
   const [conversations, setConversations] = useState([]);
-  const [arrivalMessage, setArrivalMessage] = useState({});
+  const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState({});
   const socket = useRef();
 
@@ -59,20 +60,26 @@ const WebScreen = () => {
     // });
   };
 
+  const handleDialogClick = async dialog => {
+    setCurrentDialog(dialog);
+
+    setArrivalMessages(await getMessages(dialog.id));
+  };
+
   return (
     <>
       <div className="container mx-auto h-screen flex">
         <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 h-screen">
           <ul className="list-none p-0">
-            {conversations?.map(contact => (
+            {conversations?.map(dialog => (
               <Contact
-                name={contact.name}
-                lastMessage={contact.lastMessage}
-                receivedAt={contact.receivedAt}
-                avatar={contact.avatar}
-                key={contact.id}
-                active={currentDialog?.id === contact.id}
-                onClick={() => setCurrentDialog(contact)}
+                name={dialog.name}
+                lastMessage={dialog.lastMessage}
+                receivedAt={dialog.receivedAt}
+                avatar={dialog.avatar}
+                key={dialog.id}
+                active={currentDialog?.id === dialog.id}
+                onClick={() => handleDialogClick(dialog)}
               />
             ))}
           </ul>
@@ -89,13 +96,9 @@ const WebScreen = () => {
             />
             {/* Chat */}
             <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
-              <Message />
-              <Message />
-              <Message own={arrivalMessage.sender === user.id} />
-              <Message />
-              <Message own={true} />
-              <Message own={true} />
-              <Message />
+              {arrivalMessages?.map(msg => (
+                <Message own={msg.receiverId === user.id} key={msg.id} />
+              ))}
             </div>
             {/* Input message */}
             <div className="flex p-3 bg-gray-200">

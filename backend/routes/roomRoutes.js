@@ -11,6 +11,6 @@ const router = express.Router();
 
 router.route("/").post(protect, addRoom).get(protect, getRooms);
 router.route("/message").post(protect, addMessage);
-router.route("/messages").get(protect, getMessages);
+router.route("/messages").post(protect, getMessages);
 
 export default router;
