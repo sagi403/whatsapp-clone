@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    receiver: {
-      type: String,
+    receiverId: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     text: {

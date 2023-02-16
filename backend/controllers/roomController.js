@@ -7,28 +7,35 @@ import compareDates from "../utils/compareDates.js";
 // @route   POST /api/rooms
 // @access  Private
 const addRoom = asyncHandler(async (req, res) => {
-  const { roomTitle } = req.body;
-  const { username } = req.user;
+  const { receiverId } = req.body;
+  const { id } = req.user;
 
-  const receiverUser = await User.findOne({ username: roomTitle });
+  if (receiverId === id) {
+    res.status(400);
+    throw new Error("Invalid information provided");
+  }
 
-  if (!receiverUser) {
+  const receiverUser = await User.findById(receiverId);
+  const loginUser = await User.findById(id);
+
+  if (!loginUser || !receiverUser) {
     res.status(400);
     throw new Error("User not found");
   }
 
-  const roomExists = await Room.findOne({ roomTitle, namespace: username });
+  const participants = [receiverId, id];
+
+  const roomExists = await Room.findOne({
+    participants: { $in: participants },
+    participants: { $size: 2 },
+  });
 
   if (roomExists) {
     res.status(400);
     throw new Error("Room already added");
   }
 
-  await Room.create({
-    roomTitle,
-    namespace: username,
-    user: receiverUser.id,
-  });
+  await Room.create({ participants });
 
   res.status(201).json({ message: "Room added successfully" });
 });
@@ -37,10 +44,10 @@ const addRoom = asyncHandler(async (req, res) => {
 // @route   GET /api/rooms
 // @access  Private
 const getRooms = asyncHandler(async (req, res) => {
-  const { username } = req.user;
+  const { id } = req.user;
 
-  const rooms = await Room.find({ namespace: username })
-    .populate("user")
+  const rooms = await Room.find({ participants: { $in: id } })
+    .populate("participants")
     .select("-conversationHistory");
 
   if (!rooms) {
@@ -48,36 +55,42 @@ const getRooms = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  const contact = rooms.map(room => {
+  const contacts = rooms.map(room => {
     const receivedAt = room.lastMessage && compareDates(room.updatedAt);
+    const user = room.participants.find(p => p.id !== id);
 
     return {
-      name: room.roomTitle,
+      name: user.username,
       lastMessage: room.lastMessage,
       receivedAt,
-      avatar: room.user.avatarColors,
+      avatar: user.avatarColors,
       id: room.id,
     };
   });
 
-  res.json({ contact });
+  res.json({ contacts });
 });
 
 // @desc    Add message to room
 // @route   POST /api/rooms/message
 // @access  Private
 const addMessage = asyncHandler(async (req, res) => {
-  const { receiver, text } = req.body;
-  const { username } = req.user;
+  const { receiverId, text } = req.body;
+  const { id } = req.user;
 
-  const room = await Room.findOne({ roomTitle: receiver, namespace: username });
+  if (receiverId === id) {
+    res.status(400);
+    throw new Error("Invalid information provided");
+  }
+
+  const room = await Room.findOne({ participants: { $in: [id, receiverId] } });
 
   if (!room) {
     res.status(400);
     throw new Error("Room not found");
   }
 
-  const message = { receiver, text };
+  const message = { receiverId, text };
 
   room.conversationHistory.push(message);
   room.lastMessage = text;
@@ -86,4 +99,28 @@ const addMessage = asyncHandler(async (req, res) => {
   res.json({ message: "Message added successfully" });
 });
 
-export { addRoom, getRooms, addMessage };
+// @desc    Fetch all messages from room
+// @route   GET /api/rooms/messages
+// @access  Private
+const getMessages = asyncHandler(async (req, res) => {
+  const { receiverId } = req.body;
+  const { id } = req.user;
+
+  if (receiverId === id) {
+    res.status(400);
+    throw new Error("Invalid information provided");
+  }
+
+  const room = await Room.findOne({ participants: { $in: [id, receiverId] } });
+
+  if (!room) {
+    res.status(400);
+    throw new Error("Room not found");
+  }
+
+  const messages = room.conversationHistory;
+
+  res.json({ messages });
+});
+
+export { addRoom, getRooms, addMessage, getMessages };

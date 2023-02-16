@@ -3,21 +3,15 @@ import { messageSchema } from "./messageModel.js";
 
 const roomSchema = new mongoose.Schema(
   {
-    roomTitle: {
-      type: String,
-      required: true,
-    },
-    namespace: {
-      type: String,
-      required: true,
-    },
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+      },
+    ],
     lastMessage: {
       type: String,
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
     },
     conversationHistory: [messageSchema],
   },
