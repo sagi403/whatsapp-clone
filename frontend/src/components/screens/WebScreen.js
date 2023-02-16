@@ -62,8 +62,9 @@ const WebScreen = () => {
 
   const handleDialogClick = async dialog => {
     setCurrentDialog(dialog);
+    console.log(dialog);
 
-    setArrivalMessages(await getMessages(dialog.id));
+    setArrivalMessages(await getMessages(dialog.userId));
   };
 
   return (
@@ -77,8 +78,8 @@ const WebScreen = () => {
                 lastMessage={dialog.lastMessage}
                 receivedAt={dialog.receivedAt}
                 avatar={dialog.avatar}
-                key={dialog.id}
-                active={currentDialog?.id === dialog.id}
+                key={dialog.userId}
+                active={currentDialog?.userId === dialog.userId}
                 onClick={() => handleDialogClick(dialog)}
               />
             ))}

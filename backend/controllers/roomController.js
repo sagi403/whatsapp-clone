@@ -26,7 +26,7 @@ const addRoom = asyncHandler(async (req, res) => {
   const participants = [receiverId, id];
 
   const roomExists = await Room.findOne({
-    participants: { $in: participants },
+    participants: { $all: participants },
     participants: { $size: 2 },
   });
 
@@ -61,10 +61,11 @@ const getRooms = asyncHandler(async (req, res) => {
 
     return {
       name: user.username,
+      userId: user.id,
       lastMessage: room.lastMessage,
       receivedAt,
       avatar: user.avatarColors,
-      id: room.id,
+      roomId: room.id,
     };
   });
 
@@ -83,7 +84,7 @@ const addMessage = asyncHandler(async (req, res) => {
     throw new Error("Invalid information provided");
   }
 
-  const room = await Room.findOne({ participants: { $in: [id, receiverId] } });
+  const room = await Room.findOne({ participants: { $all: [id, receiverId] } });
 
   if (!room) {
     res.status(400);
@@ -106,12 +107,15 @@ const getMessages = asyncHandler(async (req, res) => {
   const { receiverId } = req.body;
   const { id } = req.user;
 
+  console.log(receiverId);
+  console.log(id);
+
   if (receiverId === id) {
     res.status(400);
     throw new Error("Invalid information provided");
   }
 
-  const room = await Room.findOne({ participants: { $in: [id, receiverId] } });
+  const room = await Room.findOne({ participants: { $all: [id, receiverId] } });
 
   if (!room) {
     res.status(400);
