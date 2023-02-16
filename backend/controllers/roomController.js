@@ -49,7 +49,7 @@ const getRooms = asyncHandler(async (req, res) => {
   }
 
   const contact = rooms.map(room => {
-    const receivedAt = compareDates(room.updatedAt);
+    const receivedAt = room.lastMessage && compareDates(room.updatedAt);
 
     return {
       name: room.roomTitle,

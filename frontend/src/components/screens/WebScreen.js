@@ -3,29 +3,22 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Contact from "../base/Contact";
 import Message from "../base/Message";
-import { contacts } from "../../data/contacts";
 import UserHeader from "../base/UserHeader";
 import { getContactList } from "../../fetchers/getContactList";
-
-const user = {
-  name: "Admin",
-  lastMessage: "test test ",
-  receivedAt: "12:12",
-  image: "https://via.placeholder.com/50x50",
-  lastConnected: "Today, 12:00 PM",
-  id: Math.floor(Math.random() * 10000000),
-};
+import { useAuth } from "../../hooks/useAuth";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
   const [conversations, setConversations] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState({});
-  const [currentDialog, setCurrentDialog] = useState(contacts[0]);
+  const [currentDialog, setCurrentDialog] = useState({});
   const socket = useRef();
 
   const { data, error } = useQuery(["conversations"], getContactList, {
     staleTime: 60000,
   });
+
+  const { user } = useAuth();
 
   useEffect(() => {
     // socket.current = io("ws://localhost:8000");
@@ -39,8 +32,10 @@ const WebScreen = () => {
   }, []);
 
   useEffect(() => {
+    console.log(user);
     if (data) {
       setConversations(data);
+      setCurrentDialog(data[0]);
     }
   }, [data]);
 
@@ -76,7 +71,7 @@ const WebScreen = () => {
                 receivedAt={contact.receivedAt}
                 avatar={contact.avatar}
                 key={contact.id}
-                active={currentDialog.id === contact.id}
+                active={currentDialog?.id === contact.id}
                 onClick={() => setCurrentDialog(contact)}
               />
             ))}
@@ -86,9 +81,11 @@ const WebScreen = () => {
           <div className="flex flex-col h-full">
             {/* User headline */}
             <UserHeader
-              name={currentDialog.name}
-              lastConnected={currentDialog.lastConnected}
-              image={currentDialog.image}
+              name={currentDialog?.name}
+              lastConnected={
+                currentDialog?.receivedAt /*need to get from redis*/
+              }
+              avatar={currentDialog?.avatar}
             />
             {/* Chat */}
             <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
