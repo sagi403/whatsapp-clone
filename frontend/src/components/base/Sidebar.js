@@ -3,13 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getContactList } from "../../fetchers/getContactList";
 import { getMessages } from "../../fetchers/getMessages";
 import Dialog from "./Dialog";
+import { useAuth } from "../../hooks/useAuth";
+import AddConversationModal from "../modals/AddConversation";
 
 const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
   const [conversations, setConversations] = useState([]);
+  const [newConversationId, setNewConversationId] = useState(null);
+  const [showAddConversationModal, setShowAddConversationModal] =
+    useState(false);
 
   const { data, error } = useQuery(["conversations"], getContactList, {
     staleTime: 60000,
   });
+
+  const { user } = useAuth();
 
   useEffect(() => {
     if (data) {
@@ -22,6 +29,10 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
     setCurrentDialog(dialog);
 
     setArrivalMessages(await getMessages(dialog.userId));
+  };
+
+  const handleAddConversation = () => {
+    setShowAddConversationModal(true);
   };
 
   return (
@@ -41,9 +52,22 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
           ))}
         </ul>
       </div>
-      <button className="bg-green-600 hover:bg-green-700 text-white py-3 px-4 w-full absolute bottom-0 left-0 right-0">
-        Add Conversation
-      </button>
+      <div className="absolute bottom-0 left-0 right-0 border-t-2 border-gray-300">
+        <div className="text-sm text-gray-500 p-4">
+          Your Id: <span className="">{user.id}</span>
+        </div>
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white py-3 px-4 w-full"
+          onClick={handleAddConversation}
+        >
+          Add Conversation
+        </button>
+      </div>
+      <AddConversationModal
+        show={showAddConversationModal}
+        onHide={() => setShowAddConversationModal(false)}
+        onAddConversation={id => setNewConversationId(id)}
+      />
     </div>
   );
 };
