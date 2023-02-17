@@ -1,23 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 // import { io } from "socket.io-client";
-import { useQuery } from "@tanstack/react-query";
-import Contact from "../base/Dialog";
 import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
-import { getContactList } from "../../fetchers/getContactList";
 import { useAuth } from "../../hooks/useAuth";
-import { getMessages } from "../../fetchers/getMessages";
+import Sidebar from "../base/Sidebar";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
-  const [conversations, setConversations] = useState([]);
   const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState({});
   const socket = useRef();
-
-  const { data, error } = useQuery(["conversations"], getContactList, {
-    staleTime: 60000,
-  });
 
   const { user } = useAuth();
 
@@ -31,14 +23,6 @@ const WebScreen = () => {
     //   });
     // });
   }, []);
-
-  useEffect(() => {
-    console.log(user);
-    if (data) {
-      setConversations(data);
-      setCurrentDialog(data[0]);
-    }
-  }, [data]);
 
   useEffect(() => {
     // socket.current.emit("addUser", user.id);
@@ -60,31 +44,14 @@ const WebScreen = () => {
     // });
   };
 
-  const handleDialogClick = async dialog => {
-    setCurrentDialog(dialog);
-    console.log(dialog);
-
-    setArrivalMessages(await getMessages(dialog.userId));
-  };
-
   return (
     <>
       <div className="container mx-auto h-screen flex">
-        <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 h-screen">
-          <ul className="list-none p-0">
-            {conversations?.map(dialog => (
-              <Contact
-                name={dialog.name}
-                lastMessage={dialog.lastMessage}
-                receivedAt={dialog.receivedAt}
-                avatar={dialog.avatar}
-                key={dialog.userId}
-                active={currentDialog?.userId === dialog.userId}
-                onClick={() => handleDialogClick(dialog)}
-              />
-            ))}
-          </ul>
-        </div>
+        <Sidebar
+          currentDialog={currentDialog}
+          setCurrentDialog={setCurrentDialog}
+          setArrivalMessages={setArrivalMessages}
+        />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
           <div className="flex flex-col h-full">
             {/* User headline */}

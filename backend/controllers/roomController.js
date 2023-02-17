@@ -107,9 +107,6 @@ const getMessages = asyncHandler(async (req, res) => {
   const { receiverId } = req.body;
   const { id } = req.user;
 
-  console.log(receiverId);
-  console.log(id);
-
   if (receiverId === id) {
     res.status(400);
     throw new Error("Invalid information provided");
