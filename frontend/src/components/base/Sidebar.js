@@ -47,8 +47,8 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
   };
 
   return (
-    <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 h-screen relative">
-      <div className="container overflow-auto h-full pb-16">
+    <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 flex flex-col">
+      <div className="overflow-auto flex-1">
         <ul className="list-none p-0">
           {conversations?.map(dialog => (
             <Dialog
@@ -63,7 +63,7 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
           ))}
         </ul>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 border-t-2 border-gray-300">
+      <div className="border-t-2 border-gray-300">
         <div className="text-sm text-gray-500 p-4">
           Your Id: <span className="">{user.id}</span>
         </div>
