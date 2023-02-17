@@ -27,7 +27,6 @@ const addRoom = asyncHandler(async (req, res) => {
 
   const roomExists = await Room.findOne({
     participants: { $all: participants },
-    participants: { $size: 2 },
   });
 
   if (roomExists) {

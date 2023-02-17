@@ -5,6 +5,7 @@ import { getMessages } from "../../fetchers/getMessages";
 import Dialog from "./Dialog";
 import { useAuth } from "../../hooks/useAuth";
 import AddConversationModal from "../modals/AddConversation";
+import { addNewConversation } from "../../fetchers/addNewConversation";
 
 const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
   const [conversations, setConversations] = useState([]);
@@ -12,8 +13,8 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
   const [showAddConversationModal, setShowAddConversationModal] =
     useState(false);
 
-  const { data, error } = useQuery(["conversations"], getContactList, {
-    staleTime: 60000,
+  const { data, error, refetch } = useQuery(["conversations"], getContactList, {
+    staleTime: 3000,
   });
 
   const { user } = useAuth();
@@ -24,6 +25,16 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
       setCurrentDialog(data[0]);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (newConversationId) {
+      (async () => {
+        await addNewConversation(newConversationId);
+
+        refetch();
+      })();
+    }
+  }, [newConversationId]);
 
   const handleDialogClick = async dialog => {
     setCurrentDialog(dialog);
