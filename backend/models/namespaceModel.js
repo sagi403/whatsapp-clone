@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 
 const namespaceSchema = new mongoose.Schema(
   {
-    nsTitle: {
-      type: String,
+    userNs: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "User",
     },
     endpoint: {
       type: String,

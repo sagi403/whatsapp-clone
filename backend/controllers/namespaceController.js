@@ -39,4 +39,13 @@ const createNamespace = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true });
 });
 
-export { createNamespace };
+// @desc    Fetch all namespaces
+// @route   GET /api/namespaces
+// @access  Public
+const getAllNamespaces = asyncHandler(async (req, res) => {
+  const namespaces = await Namespace.find({});
+
+  res.json(namespaces);
+});
+
+export { createNamespace, getAllNamespaces };

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-// import { io } from "socket.io-client";
+import { io } from "socket.io-client";
 import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
@@ -7,6 +7,7 @@ import Sidebar from "../base/Sidebar";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
+  const [arrivalMessage, setArrivalMessage] = useState({});
   const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState({});
   const socket = useRef();
@@ -14,34 +15,42 @@ const WebScreen = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    // socket.current = io("ws://localhost:8000");
-    // socket.current.on("getMessage", data => {
-    //   setArrivalMessage({
-    //     sender: data.senderId,
-    //     text: data.text,
-    //     createdAt: Date.now(),
-    //   });
-    // });
-  }, []);
+    if (user) {
+      socket.current = io(`ws://localhost:8000/${user.id}`);
+      socket.current.on("getMessage", data => {
+        setArrivalMessage({
+          sender: data.senderId,
+          text: data.text,
+          createdAt: Date.now(),
+        });
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
-    // socket.current.emit("addUser", user.id);
+    if (currentDialog?.roomId) {
+      socket.current.emit("joinRoom", currentDialog.roomId);
+    }
+  }, [currentDialog]);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user.id);
   }, []);
 
   const handleSubmit = e => {
     e.preventDefault();
 
     const newMessage = {
-      sender: user.id,
+      // sender: user.id,
       text: message,
     };
     const receiverId = currentDialog.id;
 
-    // socket.current.emit("sendMessage", {
-    //   senderId: user.id,
-    //   receiverId,
-    //   text: newMessage.text,
-    // });
+    socket.current.emit("sendMessage", {
+      // senderId: user.id,
+      receiverId,
+      text: newMessage.text,
+    });
   };
 
   return (
