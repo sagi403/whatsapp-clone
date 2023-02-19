@@ -90,7 +90,13 @@ const addMessage = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  const message = { receiverId, text };
+  const time = new Date().toLocaleTimeString("en-US", {
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const message = { receiverId, text, time };
 
   room.conversationHistory.push(message);
   room.lastMessage = text;

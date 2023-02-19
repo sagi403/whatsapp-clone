@@ -33,22 +33,24 @@ usersId.forEach(id => {
     nsSocket.on("joinRoom", roomToJoin => {
       const roomToLeave = Array.from(nsSocket.rooms)[0];
       nsSocket.leave(roomToLeave);
-
-      console.log("roomToJoin", roomToJoin);
-      console.log("roomToLeave", roomToLeave);
-
       nsSocket.join(roomToJoin);
-      const newJoinedRoom = Array.from(nsSocket.rooms)[0];
-      console.log("newJoinedRoom", newJoinedRoom);
     });
 
-    nsSocket.on("sendMessage", ({ senderId, text }) => {
-      console.log(text);
+    nsSocket.on("newMessageToServer", ({ receiverId, text }) => {
+      const fullMsg = {
+        text,
+        receiverId,
+        time: new Date().toLocaleTimeString("en-US", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        id: Date.now(),
+      };
 
-      // io.to(user.socketId).emit("getMessage", {
-      //   senderId,
-      //   text,
-      // });
+      const room = Array.from(nsSocket.rooms)[0];
+
+      io.of(`/${id}`).to(room).emit("messageToClient", fullMsg);
     });
   });
 });

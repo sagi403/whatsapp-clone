@@ -7,7 +7,7 @@ import Sidebar from "../base/Sidebar";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
-  const [arrivalMessage, setArrivalMessage] = useState({});
+  const [arrivalMessage, setArrivalMessage] = useState(null);
   const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState({});
   const socket = useRef();
@@ -17,12 +17,10 @@ const WebScreen = () => {
   useEffect(() => {
     if (user) {
       socket.current = io(`ws://localhost:8000/${user.id}`);
-      socket.current.on("getMessage", data => {
-        setArrivalMessage({
-          sender: data.senderId,
-          text: data.text,
-          createdAt: Date.now(),
-        });
+      socket.current.on("messageToClient", data => {
+        const { time, text, createdAt, id } = data;
+
+        setArrivalMessage({ time, text, createdAt, id });
       });
     }
   }, [user]);
@@ -37,6 +35,12 @@ const WebScreen = () => {
     socket.current.emit("addUser", user.id);
   }, []);
 
+  useEffect(() => {
+    if (arrivalMessage) {
+      setArrivalMessages(prev => [...prev, arrivalMessage]);
+    }
+  }, [arrivalMessage]);
+
   const handleSubmit = e => {
     e.preventDefault();
 
@@ -44,9 +48,9 @@ const WebScreen = () => {
       // sender: user.id,
       text: message,
     };
-    const receiverId = currentDialog.id;
+    const receiverId = currentDialog.userId;
 
-    socket.current.emit("sendMessage", {
+    socket.current.emit("newMessageToServer", {
       // senderId: user.id,
       receiverId,
       text: newMessage.text,
@@ -74,7 +78,12 @@ const WebScreen = () => {
             {/* Chat */}
             <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
               {arrivalMessages?.map(msg => (
-                <Message own={msg.receiverId === user.id} key={msg.id} />
+                <Message
+                  own={msg.receiverId !== user.id}
+                  text={msg.text}
+                  createdAt={msg.time}
+                  key={msg.id}
+                />
               ))}
             </div>
             {/* Input message */}
