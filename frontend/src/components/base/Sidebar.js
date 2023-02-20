@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { io } from "socket.io-client";
 import { getContactList } from "../../fetchers/getContactList";
 import { getMessages } from "../../fetchers/getMessages";
 import Dialog from "./Dialog";
@@ -7,7 +8,13 @@ import { useAuth } from "../../hooks/useAuth";
 import AddConversationModal from "../modals/AddConversation";
 import { addNewConversation } from "../../fetchers/addNewConversation";
 
-const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
+const Sidebar = ({
+  currentDialog,
+  setCurrentDialog,
+  setArrivalMessages,
+  setArrivalMessage,
+  socket,
+}) => {
   const [conversations, setConversations] = useState([]);
   const [newConversationId, setNewConversationId] = useState(null);
   const [showAddConversationModal, setShowAddConversationModal] =
@@ -23,6 +30,16 @@ const Sidebar = ({ currentDialog, setCurrentDialog, setArrivalMessages }) => {
     if (data) {
       setConversations(data);
       setCurrentDialog(data[0]);
+
+      socket.current = io(`ws://localhost:8000/${data[0].roomId}`);
+      socket.current.on("messageToClient", data => {
+        const { text, receiverId, time, id } = data;
+
+        setArrivalMessage({ text, receiverId, time, id });
+      });
+      // socket.current.on("updateMembers", data => {
+      //   console.log(data);
+      // });
     }
   }, [data]);
 

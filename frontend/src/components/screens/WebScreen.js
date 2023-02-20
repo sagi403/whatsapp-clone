@@ -15,28 +15,20 @@ const WebScreen = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      socket.current = io(`ws://localhost:8000/${user.id}`);
-      socket.current.on("messageToClient", data => {
-        const { time, text, createdAt, id } = data;
-
-        setArrivalMessage({ time, text, createdAt, id });
-      });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (currentDialog?.roomId) {
+    if (currentDialog?.roomId && socket.current) {
       socket.current.emit("joinRoom", currentDialog.roomId);
     }
   }, [currentDialog]);
 
   useEffect(() => {
-    socket.current.emit("addUser", user.id);
+    if (socket.current) {
+      socket.current.emit("addUser", user.id);
+    }
   }, []);
 
   useEffect(() => {
     if (arrivalMessage) {
+      console.log(arrivalMessage);
       setArrivalMessages(prev => [...prev, arrivalMessage]);
     }
   }, [arrivalMessage]);
@@ -44,16 +36,11 @@ const WebScreen = () => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    const newMessage = {
-      // sender: user.id,
-      text: message,
-    };
     const receiverId = currentDialog.userId;
 
     socket.current.emit("newMessageToServer", {
-      // senderId: user.id,
       receiverId,
-      text: newMessage.text,
+      text: message,
     });
   };
 
@@ -64,6 +51,8 @@ const WebScreen = () => {
           currentDialog={currentDialog}
           setCurrentDialog={setCurrentDialog}
           setArrivalMessages={setArrivalMessages}
+          setArrivalMessage={msg => setArrivalMessage(msg)}
+          socket={socket}
         />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
           <div className="flex flex-col h-full">
@@ -74,6 +63,7 @@ const WebScreen = () => {
                 currentDialog?.receivedAt /*need to get from redis*/
               }
               avatar={currentDialog?.avatar}
+              // socket={socket}
             />
             {/* Chat */}
             <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
