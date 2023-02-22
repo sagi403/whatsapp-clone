@@ -9,18 +9,20 @@ const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthContentProvider>
-          <Routes>
-            <Route path="/" element={<LoginScreen />} />
-            <Route element={<RequireAuth />}>
-              <Route path="/web" element={<WebScreen />} />
-            </Route>
-          </Routes>
-        </AuthContentProvider>
-      </Router>
-    </QueryClientProvider>
+    <div className="bg-gray-200">
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <AuthContentProvider>
+            <Routes>
+              <Route path="/" element={<LoginScreen />} />
+              <Route element={<RequireAuth />}>
+                <Route path="/web" element={<WebScreen />} />
+              </Route>
+            </Routes>
+          </AuthContentProvider>
+        </Router>
+      </QueryClientProvider>
+    </div>
   );
 };
 

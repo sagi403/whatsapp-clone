@@ -5,12 +5,13 @@ import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../base/Sidebar";
 import { addNewMessage } from "../../fetchers/addNewMessage";
+import AwaitPick from "../base/AwaitPick";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [arrivalMessages, setArrivalMessages] = useState([]);
-  const [currentDialog, setCurrentDialog] = useState({});
+  const [currentDialog, setCurrentDialog] = useState(null);
   const socket = useRef();
 
   const { user } = useAuth();
@@ -48,7 +49,7 @@ const WebScreen = () => {
     };
 
     socket.current.emit("newMessageToServer", msg);
-    await addNewMessage(msg);
+    // await addNewMessage(msg);
 
     setMessage("");
   };
@@ -64,45 +65,49 @@ const WebScreen = () => {
           socket={socket}
         />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
-          <div className="flex flex-col h-full">
-            {/* User headline */}
-            <UserHeader
-              name={currentDialog?.name}
-              lastConnected={
-                currentDialog?.receivedAt /*need to get from redis*/
-              }
-              avatar={currentDialog?.avatar}
-              // socket={socket}
-            />
-            {/* Chat */}
-            <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
-              {arrivalMessages?.map(msg => (
-                <Message
-                  own={msg.receiverId !== user.id}
-                  text={msg.text}
-                  createdAt={msg.time}
-                  key={msg.id}
-                />
-              ))}
-            </div>
-            {/* Input message */}
-            <div className="flex p-3 bg-gray-200">
-              <input
-                type="text"
-                className="border border-gray-400 p-2 w-full rounded-lg"
-                placeholder="Type a message..."
-                value={message}
-                onChange={e => setMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
+          {currentDialog ? (
+            <div className="flex flex-col h-full">
+              {/* User headline */}
+              <UserHeader
+                name={currentDialog?.name}
+                lastConnected={
+                  currentDialog?.receivedAt /*need to get from redis*/
+                }
+                avatar={currentDialog?.avatar}
+                // socket={socket}
               />
-              <button
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
-                onClick={handleSubmit}
-              >
-                Send
-              </button>
+              {/* Chat */}
+              <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
+                {arrivalMessages?.map(msg => (
+                  <Message
+                    own={msg.receiverId !== user.id}
+                    text={msg.text}
+                    createdAt={msg.time}
+                    key={msg.id}
+                  />
+                ))}
+              </div>
+              {/* Input message */}
+              <div className="flex p-3 bg-gray-200">
+                <input
+                  type="text"
+                  className="border border-gray-400 p-2 w-full rounded-lg"
+                  placeholder="Type a message..."
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <button
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                  onClick={handleSubmit}
+                >
+                  Send
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <AwaitPick />
+          )}
         </div>
       </div>
     </>

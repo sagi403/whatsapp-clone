@@ -28,9 +28,8 @@ const Sidebar = ({
   useEffect(() => {
     if (data) {
       setConversations(data);
-      setCurrentDialog(data[0]);
 
-      socket.current.on("messageToClient", data => {
+      socket.current?.on("messageToClient", data => {
         const { text, receiverId, time, id } = data;
 
         setArrivalMessage({ text, receiverId, time, id });
@@ -62,7 +61,7 @@ const Sidebar = ({
   };
 
   return (
-    <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-gray-200 flex flex-col">
+    <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-white flex flex-col">
       <div className="overflow-auto flex-1">
         <ul className="list-none p-0">
           {conversations?.map(dialog => (
