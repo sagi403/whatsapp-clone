@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { io } from "socket.io-client";
 import { getContactList } from "../../fetchers/getContactList";
 import { getMessages } from "../../fetchers/getMessages";
 import Dialog from "./Dialog";
@@ -31,7 +30,6 @@ const Sidebar = ({
       setConversations(data);
       setCurrentDialog(data[0]);
 
-      socket.current = io(`ws://localhost:8000/${data[0].roomId}`);
       socket.current.on("messageToClient", data => {
         const { text, receiverId, time, id } = data;
 

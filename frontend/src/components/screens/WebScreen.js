@@ -16,16 +16,15 @@ const WebScreen = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    socket.current = io(`ws://localhost:8000`);
+    socket.current.emit("addUser", user.id);
+  }, []);
+
+  useEffect(() => {
     if (currentDialog?.roomId && socket.current) {
       socket.current.emit("joinRoom", currentDialog.roomId);
     }
   }, [currentDialog]);
-
-  useEffect(() => {
-    if (socket.current) {
-      socket.current.emit("addUser", user.id);
-    }
-  }, []);
 
   useEffect(() => {
     if (arrivalMessage) {
@@ -49,7 +48,6 @@ const WebScreen = () => {
     };
 
     socket.current.emit("newMessageToServer", msg);
-
     await addNewMessage(msg);
 
     setMessage("");

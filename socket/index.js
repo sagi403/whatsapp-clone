@@ -6,11 +6,6 @@ const io = require("socket.io")(8000, {
   },
 });
 
-let roomsId = [
-  "63f21963cfd64d70a0f348d5",
-  "63f36fa168ea04c9af0d47ef",
-  "63f36fb768ea04c9af0d4800",
-];
 let users = [];
 
 const addUser = (userId, socketId) => {
@@ -24,39 +19,37 @@ const getUser = userId => {
   return users.find(user => user.userId === userId);
 };
 
-roomsId.forEach(room => {
-  io.of(`/${room}`).on("connection", nsSocket => {
-    console.log("a user connected");
+io.on("connection", nsSocket => {
+  console.log("a user connected");
 
-    // addUser(id, nsSocket.id);
+  // addUser(id, nsSocket.id);
 
-    nsSocket.on("joinRoom", roomToJoin => {
-      const roomToLeave = Array.from(nsSocket.rooms)[0];
-      nsSocket.leave(roomToLeave);
-      nsSocket.join(roomToJoin);
+  nsSocket.on("joinRoom", roomToJoin => {
+    const roomToLeave = Array.from(nsSocket.rooms)[0];
+    nsSocket.leave(roomToLeave);
+    nsSocket.join(roomToJoin);
 
-      updateUsersInRoom(`/${room}`, roomToJoin);
-    });
+    updateUsersInRoom("/", roomToJoin);
+  });
 
-    nsSocket.on("newMessageToServer", ({ receiverId, text }) => {
-      const fullMsg = {
-        text,
-        receiverId,
-        time: new Date().toLocaleTimeString("en-US", {
-          hour12: false,
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        id: randomIdGenerator(),
-      };
+  nsSocket.on("newMessageToServer", ({ receiverId, text }) => {
+    console.log({ receiverId, text });
+    const fullMsg = {
+      text,
+      receiverId,
+      time: new Date().toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      id: randomIdGenerator(),
+    };
 
-      const room = Array.from(nsSocket.rooms)[0];
-      // console.log(Array.from(nsSocket.rooms));
+    const room = Array.from(nsSocket.rooms)[0];
 
-      // const { userId } = getUser(receiverId);
+    // const { userId } = getUser(receiverId);
 
-      io.of(`/${room}`).to(room).emit("messageToClient", fullMsg);
-    });
+    io.of("/").to(room).emit("messageToClient", fullMsg);
   });
 });
 
