@@ -32,13 +32,9 @@ roomsId.forEach(room => {
 
     nsSocket.on("joinRoom", roomToJoin => {
       const roomToLeave = Array.from(nsSocket.rooms)[0];
-      console.log(Array.from(nsSocket.rooms));
       nsSocket.leave(roomToLeave);
       nsSocket.join(roomToJoin);
 
-      console.log("roomToLeave", roomToLeave);
-      console.log("roomToJoin", roomToJoin);
-      console.log(Array.from(nsSocket.rooms));
       updateUsersInRoom(`/${room}`, roomToJoin);
     });
 

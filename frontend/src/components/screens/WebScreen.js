@@ -4,6 +4,7 @@ import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../base/Sidebar";
+import { addNewMessage } from "../../fetchers/addNewMessage";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -28,20 +29,30 @@ const WebScreen = () => {
 
   useEffect(() => {
     if (arrivalMessage) {
-      console.log(arrivalMessage);
       setArrivalMessages(prev => [...prev, arrivalMessage]);
     }
   }, [arrivalMessage]);
 
-  const handleSubmit = e => {
+  const handleKeyDown = e => {
+    if (e.keyCode === 13) {
+      handleSubmit(e);
+    }
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
 
     const receiverId = currentDialog.userId;
-
-    socket.current.emit("newMessageToServer", {
+    const msg = {
       receiverId,
       text: message,
-    });
+    };
+
+    socket.current.emit("newMessageToServer", msg);
+
+    await addNewMessage(msg);
+
+    setMessage("");
   };
 
   return (
@@ -84,6 +95,7 @@ const WebScreen = () => {
                 placeholder="Type a message..."
                 value={message}
                 onChange={e => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
               <button
                 className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
