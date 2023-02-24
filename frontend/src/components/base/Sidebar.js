@@ -9,9 +9,10 @@ import { addNewConversation } from "../../fetchers/addNewConversation";
 
 const Sidebar = ({
   currentDialog,
+  arrivalMessage,
+  setArrivalMessage,
   setCurrentDialog,
   setArrivalMessages,
-  setArrivalMessage,
   socket,
 }) => {
   const [conversations, setConversations] = useState([]);
@@ -26,17 +27,21 @@ const Sidebar = ({
   const { user } = useAuth();
 
   useEffect(() => {
-    if (data) {
-      setConversations(data);
-
+    if (socket.current) {
       socket.current?.on("messageToClient", data => {
-        const { text, receiverId, time, id } = data;
+        const { text, receiverId, senderId, time, id } = data;
 
-        setArrivalMessage({ text, receiverId, time, id });
+        setArrivalMessage({ text, receiverId, senderId, time, id });
       });
       // socket.current.on("updateMembers", data => {
       //   console.log(data);
       // });
+    }
+  }, [socket.current]);
+
+  useEffect(() => {
+    if (data) {
+      setConversations(data);
     }
   }, [data]);
 
@@ -67,8 +72,18 @@ const Sidebar = ({
           {conversations?.map(dialog => (
             <Dialog
               name={dialog.name}
-              lastMessage={dialog.lastMessage}
-              receivedAt={dialog.receivedAt}
+              lastMessage={
+                arrivalMessage?.receiverId === dialog.userId ||
+                dialog.userId === arrivalMessage?.senderId
+                  ? arrivalMessage.text
+                  : dialog.lastMessage
+              }
+              receivedAt={
+                arrivalMessage?.receiverId === dialog.userId ||
+                dialog.userId === arrivalMessage?.senderId
+                  ? arrivalMessage.time
+                  : dialog.receivedAt
+              }
               avatar={dialog.avatar}
               key={dialog.userId}
               active={currentDialog?.userId === dialog.userId}

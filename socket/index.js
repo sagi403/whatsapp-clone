@@ -1,4 +1,5 @@
 const randomIdGenerator = require("./utils/randomIdGenerator");
+// const client = require("redis").createClient();
 
 const io = require("socket.io")(8000, {
   cors: {
@@ -6,18 +7,23 @@ const io = require("socket.io")(8000, {
   },
 });
 
-let users = [];
+// client
+//   .connect()
+//   .then(res => console.log("Redis client is connected"))
+//   .catch(err => console.log(err));
 
-const addUser = (userId, socketId) => {
-  !users.some(user => user.userId === userId) &&
-    users.push({ userId, socketId });
+// let users = [];
 
-  // console.log(users);
-};
+// const addUser = (userId, socketId) => {
+//   !users.some(user => user.userId === userId) &&
+//     users.push({ userId, socketId });
 
-const getUser = userId => {
-  return users.find(user => user.userId === userId);
-};
+//   console.log(users);
+// };
+
+// const getUser = userId => {
+//   return users.find(user => user.userId === userId);
+// };
 
 io.on("connection", nsSocket => {
   console.log("a user connected");
@@ -32,11 +38,11 @@ io.on("connection", nsSocket => {
     updateUsersInRoom("/", roomToJoin);
   });
 
-  nsSocket.on("newMessageToServer", ({ receiverId, text }) => {
-    console.log({ receiverId, text });
+  nsSocket.on("newMessageToServer", ({ receiverId, senderId, text }) => {
     const fullMsg = {
       text,
       receiverId,
+      senderId,
       time: new Date().toLocaleTimeString("en-US", {
         hour12: false,
         hour: "2-digit",

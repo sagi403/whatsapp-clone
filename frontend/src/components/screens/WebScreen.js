@@ -44,6 +44,7 @@ const WebScreen = () => {
 
     const receiverId = currentDialog.userId;
     const msg = {
+      senderId: user.id,
       receiverId,
       text: message,
     };
@@ -59,9 +60,10 @@ const WebScreen = () => {
       <div className="container mx-auto h-screen flex">
         <Sidebar
           currentDialog={currentDialog}
+          arrivalMessage={arrivalMessage}
+          setArrivalMessage={msg => setArrivalMessage(msg)}
           setCurrentDialog={setCurrentDialog}
           setArrivalMessages={setArrivalMessages}
-          setArrivalMessage={msg => setArrivalMessage(msg)}
           socket={socket}
         />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
