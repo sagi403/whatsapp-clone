@@ -6,6 +6,8 @@ import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../base/Sidebar";
 import { addNewMessage } from "../../fetchers/addNewMessage";
 import AwaitPick from "../base/AwaitPick";
+import SvgItem from "../base/SvgItem";
+import { sendMessageSvg } from "../../data/svg";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -100,10 +102,14 @@ const WebScreen = () => {
                   onKeyDown={handleKeyDown}
                 />
                 <button
-                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded-lg"
                   onClick={handleSubmit}
                 >
-                  Send
+                  <SvgItem
+                    icon={sendMessageSvg}
+                    viewBox="0 0 64 64"
+                    fill="white"
+                  />
                 </button>
               </div>
             </div>
