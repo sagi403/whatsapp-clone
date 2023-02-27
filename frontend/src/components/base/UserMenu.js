@@ -12,7 +12,7 @@ import { useAuth } from "../../hooks/useAuth";
 const UserMenu = ({ username, avatar, onClick }) => {
   const idRef = useRef(null);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(idRef.current.innerText);
@@ -84,6 +84,7 @@ const UserMenu = ({ username, avatar, onClick }) => {
               <Menu.Item>
                 {({ active }) => (
                   <button
+                    onClick={() => logout()}
                     className={`${
                       active ? "bg-green-500 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}

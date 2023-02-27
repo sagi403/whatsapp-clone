@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { getCurrentUser } from "../../fetchers/getCurrentUser";
 import { loginUser } from "../../fetchers/loginUser";
 import { AuthContext } from "../context/AuthContext";
+import { logoutUser } from "../../fetchers/logoutUser";
 
 const AuthContentProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -34,12 +35,22 @@ const AuthContentProvider = ({ children }) => {
       .finally(() => setLoading(false));
   };
 
+  const logout = () => {
+    setLoading(true);
+
+    logoutUser()
+      .then(() => setUser(null))
+      .catch(error => setError(error))
+      .finally(() => setLoading(false));
+  };
+
   const memoedValue = useMemo(
     () => ({
       user,
       loading,
       error,
       login,
+      logout,
     }),
     [user, loading, error]
   );
