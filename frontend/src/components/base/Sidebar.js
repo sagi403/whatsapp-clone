@@ -6,6 +6,7 @@ import Dialog from "./Dialog";
 import { useAuth } from "../../hooks/useAuth";
 import AddConversationModal from "../modals/AddConversation";
 import { addNewConversation } from "../../fetchers/addNewConversation";
+import UserMenu from "./UserMenu";
 
 const Sidebar = ({
   currentDialog,
@@ -66,7 +67,7 @@ const Sidebar = ({
   };
 
   return (
-    <div className="lg:w-1/4 md:w-1/4 w-1/2 bg-white flex flex-col">
+    <div className="lg:w-1/4 md:w-1/3 w-1/2 bg-white flex flex-col">
       <div className="overflow-auto flex-1">
         <ul className="list-none p-0">
           {conversations?.map(dialog => (
@@ -93,15 +94,11 @@ const Sidebar = ({
         </ul>
       </div>
       <div className="border-t-2 border-gray-300">
-        <div className="text-sm text-gray-500 p-4">
-          Your Id: <span className="">{user.id}</span>
-        </div>
-        <button
-          className="bg-green-600 hover:bg-green-700 text-white py-3 px-4 w-full"
+        <UserMenu
+          username={user.username}
+          avatar={user.avatarColors}
           onClick={handleAddConversation}
-        >
-          Add Conversation
-        </button>
+        />
       </div>
       <AddConversationModal
         show={showAddConversationModal}
