@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { UserPlusIcon, ArrowRightCircleIcon } from "@heroicons/react/20/solid";
 import FormInputItem from "../base/FormInputItem";
-import SvgItem from "../base/SvgItem";
-import { anotherUserSvg, emailSvg, nextSvg, passwordSvg } from "../../data/svg";
+import { emailSvg, passwordSvg } from "../../data/svg";
 import { useAuth } from "../../hooks/useAuth";
 
 const LoginScreen = () => {
@@ -67,7 +67,10 @@ const LoginScreen = () => {
                   className="flex items-center justify-center focus:outline-none text-white text-sm sm:text-base bg-green-600 hover:bg-green-700 rounded py-2 w-full transition duration-150 ease-in"
                 >
                   <span className="mr-2 uppercase">Login</span>
-                  <SvgItem icon={nextSvg} />
+                  <ArrowRightCircleIcon
+                    className="h-5 w-5 text-white"
+                    aria-hidden="true"
+                  />
                 </button>
               </div>
             </form>
@@ -78,7 +81,10 @@ const LoginScreen = () => {
               target="_blank"
               className="inline-flex items-center font-bold text-green-500 hover:text-green-700 text-xs text-center"
             >
-              <SvgItem icon={anotherUserSvg} />
+              <UserPlusIcon
+                className="h-5 w-5 text-green-400"
+                aria-hidden="true"
+              />
               <span className="ml-2">You don't have an account?</span>
             </a>
           </div>
