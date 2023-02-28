@@ -25,7 +25,11 @@ const WebScreen = () => {
 
   useEffect(() => {
     if (currentDialog?.roomId && socket.current) {
-      socket.current.emit("joinRoom", currentDialog.roomId);
+      socket.current.emit("joinRoom", {
+        roomId: currentDialog.roomId,
+        sender: user.id,
+        receiver: currentDialog.userId,
+      });
     }
   }, [currentDialog]);
 

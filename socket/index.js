@@ -1,5 +1,5 @@
 const randomIdGenerator = require("./utils/randomIdGenerator");
-// const client = require("redis").createClient();
+const client = require("redis").createClient();
 
 const io = require("socket.io")(8000, {
   cors: {
@@ -7,10 +7,10 @@ const io = require("socket.io")(8000, {
   },
 });
 
-// client
-//   .connect()
-//   .then(res => console.log("Redis client is connected"))
-//   .catch(err => console.log(err));
+client
+  .connect()
+  .then(res => console.log("Redis client is connected"))
+  .catch(err => console.log(err));
 
 // let users = [];
 
@@ -30,12 +30,30 @@ io.on("connection", nsSocket => {
 
   // addUser(id, nsSocket.id);
 
-  nsSocket.on("joinRoom", roomToJoin => {
+  nsSocket.on("joinRoom", async ({ roomId, sender, receiver }) => {
     const roomToLeave = Array.from(nsSocket.rooms)[0];
     nsSocket.leave(roomToLeave);
-    nsSocket.join(roomToJoin);
+    nsSocket.join(roomId);
 
-    updateUsersInRoom("/", roomToJoin);
+    const receivers = JSON.parse(await client.get(sender)) || [];
+
+    if (receivers.some(user => Object.keys(user)[0] === receiver)) {
+      receivers.map(user => {
+        let receiverId = Object.keys(user)[0];
+
+        if (receiverId === receiver) {
+          user[receiverId] = Date.now();
+        }
+      });
+    } else {
+      receivers.push({ [receiver]: Date.now() });
+    }
+
+    const receiverArray = JSON.stringify(receivers);
+
+    await client.set(sender, receiverArray, { EX: 10 });
+
+    updateUsersInRoom("/", roomId);
   });
 
   nsSocket.on("newMessageToServer", ({ receiverId, senderId, text }) => {
