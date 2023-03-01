@@ -83,6 +83,7 @@ const Sidebar = ({
                   ? arrivalMessage.text
                   : dialog.lastMessage
               }
+              unreadMessageNumber={null}
               receivedAt={
                 dialogMessage?.senderId === dialog.userId
                   ? dialogMessage.time
