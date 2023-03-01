@@ -17,6 +17,7 @@ const Sidebar = ({
   socket,
 }) => {
   const [conversations, setConversations] = useState([]);
+  const [dialogMessage, setDialogMessage] = useState(null);
   const [newConversationId, setNewConversationId] = useState(null);
   const [showAddConversationModal, setShowAddConversationModal] =
     useState(false);
@@ -30,9 +31,11 @@ const Sidebar = ({
   useEffect(() => {
     if (socket.current) {
       socket.current?.on("messageToClient", data => {
-        const { text, receiverId, senderId, time, id } = data;
+        setArrivalMessage(data);
+      });
 
-        setArrivalMessage({ text, receiverId, senderId, time, id });
+      socket.current?.on("lastMessageToClient", data => {
+        setDialogMessage(data);
       });
       // socket.current.on("updateMembers", data => {
       //   console.log(data);
@@ -74,14 +77,16 @@ const Sidebar = ({
             <Dialog
               name={dialog.name}
               lastMessage={
-                arrivalMessage?.receiverId === dialog.userId ||
-                dialog.userId === arrivalMessage?.senderId
+                dialogMessage?.senderId === dialog.userId
+                  ? dialogMessage.text
+                  : arrivalMessage?.receiverId === dialog.userId
                   ? arrivalMessage.text
                   : dialog.lastMessage
               }
               receivedAt={
-                arrivalMessage?.receiverId === dialog.userId ||
-                dialog.userId === arrivalMessage?.senderId
+                dialogMessage?.senderId === dialog.userId
+                  ? dialogMessage.time
+                  : arrivalMessage?.receiverId === dialog.userId
                   ? arrivalMessage.time
                   : dialog.receivedAt
               }

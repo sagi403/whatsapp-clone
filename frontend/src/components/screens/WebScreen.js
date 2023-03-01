@@ -19,8 +19,8 @@ const WebScreen = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    socket.current = io(`ws://localhost:8000`);
-    socket.current.emit("addUser", user.id);
+    socket.current = io(`ws://localhost:8000`, { query: { userId: user.id } });
+    // socket.current.emit("addUser", user.id);
   }, []);
 
   useEffect(() => {

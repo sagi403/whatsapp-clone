@@ -27,12 +27,17 @@ client
 
 io.on("connection", nsSocket => {
   console.log("a user connected");
+  const userId = nsSocket.handshake.query.userId;
+  nsSocket.join(userId);
 
+  const roomToLeave = Array.from(nsSocket.rooms)[0];
+  nsSocket.leave(roomToLeave);
   // addUser(id, nsSocket.id);
 
   nsSocket.on("joinRoom", async ({ roomId, sender, receiver }) => {
-    const roomToLeave = Array.from(nsSocket.rooms)[0];
-    nsSocket.leave(roomToLeave);
+    const roomToLeave = Array.from(nsSocket.rooms)[1];
+
+    roomToLeave && nsSocket.leave(roomToLeave);
     nsSocket.join(roomId);
 
     const receivers = JSON.parse(await client.get(sender)) || [];
@@ -69,11 +74,12 @@ io.on("connection", nsSocket => {
       id: randomIdGenerator(),
     };
 
-    const room = Array.from(nsSocket.rooms)[0];
+    const room = Array.from(nsSocket.rooms)[1];
 
     // const { userId } = getUser(receiverId);
 
     io.of("/").to(room).emit("messageToClient", fullMsg);
+    io.of("/").to(receiverId).emit("lastMessageToClient", fullMsg);
   });
 });
 
