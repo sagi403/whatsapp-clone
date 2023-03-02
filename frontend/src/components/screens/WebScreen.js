@@ -14,12 +14,17 @@ const WebScreen = () => {
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState(null);
+  const [connected, setConnected] = useState(false);
   const socket = useRef();
 
   const { user } = useAuth();
 
   useEffect(() => {
     socket.current = io(`ws://localhost:8000`, { query: { userId: user.id } });
+    socket.current.on("userConnectedStatus", data => {
+      setConnected(data);
+    });
+
     // socket.current.emit("addUser", user.id);
   }, []);
 
@@ -78,9 +83,7 @@ const WebScreen = () => {
               {/* User headline */}
               <UserHeader
                 name={currentDialog?.name}
-                lastConnected={
-                  currentDialog?.receivedAt /*need to get from redis*/
-                }
+                lastConnected={connected && "Connected"}
                 avatar={currentDialog?.avatar}
                 // socket={socket}
               />

@@ -104,6 +104,7 @@ const Sidebar = ({
           username={user.username}
           avatar={user.avatarColors}
           onClick={handleAddConversation}
+          socket={socket}
         />
       </div>
       <AddConversationModal

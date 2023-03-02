@@ -12,19 +12,6 @@ client
   .then(res => console.log("Redis client is connected"))
   .catch(err => console.log(err));
 
-// let users = [];
-
-// const addUser = (userId, socketId) => {
-//   !users.some(user => user.userId === userId) &&
-//     users.push({ userId, socketId });
-
-//   console.log(users);
-// };
-
-// const getUser = userId => {
-//   return users.find(user => user.userId === userId);
-// };
-
 io.on("connection", nsSocket => {
   console.log("a user connected");
   const userId = nsSocket.handshake.query.userId;
@@ -54,9 +41,11 @@ io.on("connection", nsSocket => {
       receivers.push({ [receiver]: Date.now() });
     }
 
-    const receiverArray = JSON.stringify(receivers);
+    await client.set(sender, JSON.stringify(receivers), { EX: 60 });
 
-    await client.set(sender, receiverArray, { EX: 10 });
+    const isConnected = !!JSON.parse(await client.get(receiver));
+
+    io.of("/").to(roomId).emit("userConnectedStatus", isConnected);
 
     updateUsersInRoom("/", roomId);
   });
@@ -76,10 +65,21 @@ io.on("connection", nsSocket => {
 
     const room = Array.from(nsSocket.rooms)[1];
 
-    // const { userId } = getUser(receiverId);
-
     io.of("/").to(room).emit("messageToClient", fullMsg);
     io.of("/").to(receiverId).emit("lastMessageToClient", fullMsg);
+  });
+
+  nsSocket.on("disconnect", async reason => {
+    const userId = nsSocket.handshake.query.userId;
+
+    const receivers = JSON.parse(await client.get(userId)) || [];
+    const informUsers = receivers.map(user => Object.keys(user)[0]);
+
+    informUsers.map(user => {
+      io.of("/").to(user).emit("userConnectedStatus", false);
+    });
+
+    await client.del(userId);
   });
 });
 

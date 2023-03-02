@@ -9,13 +9,18 @@ import {
 import UserAvatar from "./UserAvatar";
 import { useAuth } from "../../hooks/useAuth";
 
-const UserMenu = ({ username, avatar, onClick }) => {
+const UserMenu = ({ username, avatar, onClick, socket }) => {
   const idRef = useRef(null);
 
   const { user, logout } = useAuth();
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(idRef.current.innerText);
+  };
+
+  const logoutUser = () => {
+    socket.current.disconnect("User logged out");
+    logout();
   };
 
   return (
@@ -84,7 +89,7 @@ const UserMenu = ({ username, avatar, onClick }) => {
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    onClick={() => logout()}
+                    onClick={logoutUser}
                     className={`${
                       active ? "bg-green-500 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
