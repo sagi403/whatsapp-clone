@@ -14,6 +14,7 @@ const roomSchema = new mongoose.Schema(
       type: String,
     },
     conversationHistory: [messageSchema],
+    unreadConversationHistory: [messageSchema],
   },
   {
     timestamps: true,

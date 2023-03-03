@@ -9,7 +9,9 @@
     "server": "nodemon server.js",
     "client": "npm start --prefix ../frontend",
     "socket": "npm start --prefix ../socket",
-    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run socket\""
+    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run socket\"",
+    "data:import": "set DEBUG=ltl:* & node seeder",
+    "data:destroy": "set DEBUG=ltl:* & node seeder -d"
   },
   "keywords": [],
   "author": "",
