@@ -6,7 +6,7 @@ const UserHeader = ({ name, lastConnected, avatar }) => {
       <UserAvatar name={name} colors={avatar} />
       <div>
         <p className="font-medium">{name}</p>
-        <p className="text-sm text-gray-500">{lastConnected}</p>
+        <p className="text-xs text-gray-500">{lastConnected}</p>
       </div>
     </div>
   );

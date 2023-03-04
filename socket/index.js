@@ -69,6 +69,10 @@ io.on("connection", nsSocket => {
     io.of("/").to(receiverId).emit("lastMessageToClient", fullMsg);
   });
 
+  nsSocket.on("startTypingToServer", ({ startTyping, receiver }) => {
+    io.of("/").to(receiver).emit("startTypingToClient", startTyping);
+  });
+
   nsSocket.on("disconnect", async reason => {
     const userId = nsSocket.handshake.query.userId;
 

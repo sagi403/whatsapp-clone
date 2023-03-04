@@ -11,6 +11,8 @@ import { sendMessageSvg } from "../../data/svg";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
+  const [startTyping, setStartTyping] = useState(false);
+  const [typing, setTyping] = useState(false);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState(null);
@@ -24,9 +26,21 @@ const WebScreen = () => {
     socket.current.on("userConnectedStatus", data => {
       setConnected(data);
     });
+    socket.current.on("startTypingToClient", data => {
+      setTyping(data);
+    });
 
     // socket.current.emit("addUser", user.id);
   }, []);
+
+  useEffect(() => {
+    if (currentDialog) {
+      socket.current.emit("startTypingToServer", {
+        startTyping,
+        receiver: currentDialog.userId,
+      });
+    }
+  }, [startTyping]);
 
   useEffect(() => {
     if (currentDialog?.roomId && socket.current) {
@@ -44,7 +58,9 @@ const WebScreen = () => {
     }
   }, [arrivalMessage]);
 
-  const handleKeyDown = e => {
+  const handleKeyUp = e => {
+    message ? setStartTyping(true) : setStartTyping(false);
+
     if (e.keyCode === 13) {
       handleSubmit(e);
     }
@@ -64,6 +80,7 @@ const WebScreen = () => {
     // await addNewMessage(msg);
 
     setMessage("");
+    setStartTyping(false);
   };
 
   return (
@@ -83,7 +100,7 @@ const WebScreen = () => {
               {/* User headline */}
               <UserHeader
                 name={currentDialog?.name}
-                lastConnected={connected && "Connected"}
+                lastConnected={typing ? "Typing..." : connected && "Connected"}
                 avatar={currentDialog?.avatar}
                 // socket={socket}
               />
@@ -106,7 +123,7 @@ const WebScreen = () => {
                   placeholder="Type a message..."
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
+                  onKeyUp={handleKeyUp}
                 />
                 <button
                   className="bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded-lg"
