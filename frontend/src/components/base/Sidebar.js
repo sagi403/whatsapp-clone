@@ -4,6 +4,7 @@ import { getContactList } from "../../fetchers/getContactList";
 import { getMessages } from "../../fetchers/getMessages";
 import Dialog from "./Dialog";
 import { useAuth } from "../../hooks/useAuth";
+import { useSocket } from "../../hooks/useSocket";
 import AddConversationModal from "../modals/AddConversation";
 import { addNewConversation } from "../../fetchers/addNewConversation";
 import UserMenu from "./UserMenu";
@@ -14,7 +15,6 @@ const Sidebar = ({
   setArrivalMessage,
   setCurrentDialog,
   setArrivalMessages,
-  socket,
 }) => {
   const [conversations, setConversations] = useState([]);
   const [dialogMessage, setDialogMessage] = useState(null);
@@ -27,6 +27,7 @@ const Sidebar = ({
   });
 
   const { user } = useAuth();
+  const { socket } = useSocket();
 
   useEffect(() => {
     if (socket.current) {
@@ -104,7 +105,6 @@ const Sidebar = ({
           username={user.username}
           avatar={user.avatarColors}
           onClick={handleAddConversation}
-          socket={socket}
         />
       </div>
       <AddConversationModal

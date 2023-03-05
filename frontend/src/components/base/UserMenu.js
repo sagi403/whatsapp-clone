@@ -8,11 +8,13 @@ import {
 } from "@heroicons/react/20/solid";
 import UserAvatar from "./UserAvatar";
 import { useAuth } from "../../hooks/useAuth";
+import { useSocket } from "../../hooks/useSocket";
 
-const UserMenu = ({ username, avatar, onClick, socket }) => {
+const UserMenu = ({ username, avatar, onClick }) => {
   const idRef = useRef(null);
 
   const { user, logout } = useAuth();
+  const { socket } = useSocket();
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(idRef.current.innerText);

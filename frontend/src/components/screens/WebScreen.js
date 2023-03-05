@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { useEffect, useState } from "react";
 import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
+import { useSocket } from "../../hooks/useSocket";
 import Sidebar from "../base/Sidebar";
 import { addNewMessage } from "../../fetchers/addNewMessage";
 import AwaitPick from "../base/AwaitPick";
@@ -17,30 +17,29 @@ const WebScreen = () => {
   const [arrivalMessages, setArrivalMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState(null);
   const [connected, setConnected] = useState(false);
-  const socket = useRef();
 
   const { user } = useAuth();
+  const { socket } = useSocket();
 
   useEffect(() => {
-    socket.current = io(`ws://localhost:8000`, { query: { userId: user.id } });
-    socket.current.on("userConnectedStatus", data => {
-      setConnected(data);
-    });
-    socket.current.on("startTypingToClient", data => {
-      setTyping(data);
-    });
-
-    // socket.current.emit("addUser", user.id);
-  }, []);
+    if (socket.current) {
+      socket.current.on("userConnectedStatus", data => {
+        setConnected(data);
+      });
+      socket.current.on("startTypingToClient", data => {
+        setTyping(data);
+      });
+    }
+  }, [socket.current]);
 
   useEffect(() => {
-    if (currentDialog) {
+    if (currentDialog && socket.current) {
       socket.current.emit("startTypingToServer", {
         startTyping,
         receiver: currentDialog.userId,
       });
     }
-  }, [startTyping]);
+  }, [startTyping, socket.current]);
 
   useEffect(() => {
     if (currentDialog?.roomId && socket.current) {
@@ -50,7 +49,7 @@ const WebScreen = () => {
         receiver: currentDialog.userId,
       });
     }
-  }, [currentDialog]);
+  }, [currentDialog, socket.current]);
 
   useEffect(() => {
     if (arrivalMessage) {
@@ -92,7 +91,6 @@ const WebScreen = () => {
           setArrivalMessage={msg => setArrivalMessage(msg)}
           setCurrentDialog={setCurrentDialog}
           setArrivalMessages={setArrivalMessages}
-          socket={socket}
         />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
           {currentDialog ? (
@@ -102,7 +100,6 @@ const WebScreen = () => {
                 name={currentDialog?.name}
                 lastConnected={typing ? "Typing..." : connected && "Connected"}
                 avatar={currentDialog?.avatar}
-                // socket={socket}
               />
               {/* Chat */}
               <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">

@@ -5,7 +5,7 @@ import { loginUser } from "../../fetchers/loginUser";
 import { AuthContext } from "../context/AuthContext";
 import { logoutUser } from "../../fetchers/logoutUser";
 
-const AuthContentProvider = ({ children }) => {
+const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -62,4 +62,4 @@ const AuthContentProvider = ({ children }) => {
   );
 };
 
-export default AuthContentProvider;
+export default AuthContextProvider;
