@@ -74,9 +74,15 @@ const WebScreen = () => {
       receiverId,
       text: message,
     };
+    const messages = [
+      {
+        receiverId,
+        text: message,
+      },
+    ];
 
     socket.current.emit("newMessageToServer", msg);
-    // await addNewMessage(msg);
+    // await addNewMessage(messages);
 
     setMessage("");
     setStartTyping(false);

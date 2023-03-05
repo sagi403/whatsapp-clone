@@ -75,6 +75,44 @@ const getRooms = asyncHandler(async (req, res) => {
 // @route   POST /api/rooms/message
 // @access  Private
 const addMessage = asyncHandler(async (req, res) => {
+  const { messages } = req.body;
+  const { id } = req.user;
+
+  for (let message of messages) {
+    const { receiverId, text } = message;
+
+    if (receiverId === id) {
+      res.status(400);
+      throw new Error("Invalid information provided");
+    }
+
+    const room = await Room.findOne({
+      participants: { $all: [id, receiverId] },
+    });
+
+    if (!room) {
+      res.status(400);
+      throw new Error("Room not found");
+    }
+
+    const time = new Date().toLocaleTimeString("en-US", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    room.conversationHistory.push({ receiverId, text, time });
+    room.lastMessage = text;
+    await room.save();
+  }
+
+  res.json({ message: "Message added successfully" });
+});
+
+// @desc    Add unread message to room
+// @route   POST /api/rooms/message/unread
+// @access  Private
+const addUnreadMessage = asyncHandler(async (req, res) => {
   const { receiverId, text } = req.body;
   const { id } = req.user;
 
@@ -98,11 +136,10 @@ const addMessage = asyncHandler(async (req, res) => {
 
   const message = { receiverId, text, time };
 
-  room.conversationHistory.push(message);
-  room.lastMessage = text;
+  room.unreadConversationHistory.push(message);
   await room.save();
 
-  res.json({ message: "Message added successfully" });
+  res.json({ message: "Unread message added successfully" });
 });
 
 // @desc    Fetch all messages from room
@@ -124,9 +161,12 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  const messages = room.conversationHistory;
+  const messages = {
+    read: room.conversationHistory,
+    unread: room.unreadConversationHistory,
+  };
 
   res.json({ messages });
 });
 
-export { addRoom, getRooms, addMessage, getMessages };
+export { addRoom, getRooms, addMessage, addUnreadMessage, getMessages };

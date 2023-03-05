@@ -1,10 +1,14 @@
 import axios from "axios";
 
-export const addNewMessage = async msg => {
+export const addNewMessage = async messages => {
   const config = { headers: { "Content-Type": "application/json" } };
 
   try {
-    const { data } = await axios.post("/api/rooms/message", msg, config);
+    const { data } = await axios.post(
+      "/api/rooms/message",
+      { messages },
+      config
+    );
 
     return data.message;
   } catch (error) {

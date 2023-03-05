@@ -63,7 +63,9 @@ const Sidebar = ({
   const handleDialogClick = async dialog => {
     setCurrentDialog(dialog);
 
-    setArrivalMessages(await getMessages(dialog.userId));
+    const { read, unread } = await getMessages(dialog.userId);
+
+    setArrivalMessages(read);
   };
 
   const handleAddConversation = () => {
