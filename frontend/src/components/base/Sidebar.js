@@ -8,6 +8,7 @@ import { useSocket } from "../../hooks/useSocket";
 import AddConversationModal from "../modals/AddConversation";
 import { addNewConversation } from "../../fetchers/addNewConversation";
 import UserMenu from "./UserMenu";
+import { addNewMessage } from "../../fetchers/addNewMessage";
 
 const Sidebar = ({
   currentDialog,
@@ -31,13 +32,14 @@ const Sidebar = ({
 
   useEffect(() => {
     if (socket.current) {
-      socket.current?.on("messageToClient", data => {
+      socket.current.on("messageToClient", data => {
         setArrivalMessage(data);
       });
 
-      socket.current?.on("lastMessageToClient", data => {
+      socket.current.on("lastMessageToClient", data => {
         setDialogMessage(data);
       });
+
       // socket.current.on("updateMembers", data => {
       //   console.log(data);
       // });
@@ -65,7 +67,11 @@ const Sidebar = ({
 
     const { read, unread } = await getMessages(dialog.userId);
 
-    setArrivalMessages(read);
+    setArrivalMessages([...read, ...unread]);
+
+    // await addNewMessage({ messages: unread });
+
+    // create new route to send unread messages instead of addNewMessage
   };
 
   const handleAddConversation = () => {

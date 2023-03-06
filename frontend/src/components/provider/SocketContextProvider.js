@@ -9,8 +9,12 @@ const SocketContextProvider = ({ children }) => {
   const { user } = useAuth();
 
   useEffect(() => {
-    socket.current = io(`ws://localhost:8000`, { query: { userId: user.id } });
-  }, []);
+    if (user) {
+      socket.current = io(`ws://localhost:8000`, {
+        query: { userId: user.id },
+      });
+    }
+  }, [user]);
 
   const memoedValue = useMemo(
     () => ({

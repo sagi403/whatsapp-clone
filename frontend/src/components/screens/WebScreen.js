@@ -8,6 +8,7 @@ import { addNewMessage } from "../../fetchers/addNewMessage";
 import AwaitPick from "../base/AwaitPick";
 import SvgItem from "../base/SvgItem";
 import { sendMessageSvg } from "../../data/svg";
+import { addNewUnreadMessage } from "../../fetchers/addNewUnreadMessage";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -74,15 +75,12 @@ const WebScreen = () => {
       receiverId,
       text: message,
     };
-    const messages = [
-      {
-        receiverId,
-        text: message,
-      },
-    ];
+    const messages = { receiverId, text: message };
 
     socket.current.emit("newMessageToServer", msg);
-    // await addNewMessage(messages);
+    connected
+      ? await addNewMessage(messages)
+      : await addNewUnreadMessage(messages);
 
     setMessage("");
     setStartTyping(false);

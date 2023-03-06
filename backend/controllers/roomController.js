@@ -75,36 +75,30 @@ const getRooms = asyncHandler(async (req, res) => {
 // @route   POST /api/rooms/message
 // @access  Private
 const addMessage = asyncHandler(async (req, res) => {
-  const { messages } = req.body;
+  const { receiverId, text } = req.body;
   const { id } = req.user;
 
-  for (let message of messages) {
-    const { receiverId, text } = message;
-
-    if (receiverId === id) {
-      res.status(400);
-      throw new Error("Invalid information provided");
-    }
-
-    const room = await Room.findOne({
-      participants: { $all: [id, receiverId] },
-    });
-
-    if (!room) {
-      res.status(400);
-      throw new Error("Room not found");
-    }
-
-    const time = new Date().toLocaleTimeString("en-US", {
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    room.conversationHistory.push({ receiverId, text, time });
-    room.lastMessage = text;
-    await room.save();
+  if (receiverId === id) {
+    res.status(400);
+    throw new Error("Invalid information provided");
   }
+
+  const room = await Room.findOne({ participants: { $all: [id, receiverId] } });
+
+  if (!room) {
+    res.status(400);
+    throw new Error("Room not found");
+  }
+
+  const time = new Date().toLocaleTimeString("en-US", {
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  room.conversationHistory.push({ receiverId, text, time });
+  room.lastMessage = text;
+  await room.save();
 
   res.json({ message: "Message added successfully" });
 });
@@ -134,9 +128,7 @@ const addUnreadMessage = asyncHandler(async (req, res) => {
     minute: "2-digit",
   });
 
-  const message = { receiverId, text, time };
-
-  room.unreadConversationHistory.push(message);
+  room.unreadConversationHistory.push({ receiverId, text, time });
   await room.save();
 
   res.json({ message: "Unread message added successfully" });

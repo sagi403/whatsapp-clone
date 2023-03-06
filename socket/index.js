@@ -47,7 +47,7 @@ io.on("connection", nsSocket => {
 
     io.of("/").to(roomId).emit("userConnectedStatus", isConnected);
 
-    updateUsersInRoom("/", roomId);
+    // updateUsersInRoom("/", roomId);
   });
 
   nsSocket.on("newMessageToServer", ({ receiverId, senderId, text }) => {
