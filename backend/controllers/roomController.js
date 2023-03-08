@@ -129,9 +129,40 @@ const addUnreadMessage = asyncHandler(async (req, res) => {
   });
 
   room.unreadConversationHistory.push({ receiverId, text, time });
+  room.lastMessage = text;
   await room.save();
 
   res.json({ message: "Unread message added successfully" });
+});
+
+// @desc    Add unread messages to read messages
+// @route   POST /api/rooms/message/combine
+// @access  Private
+const addUnreadToRead = asyncHandler(async (req, res) => {
+  const { roomId } = req.body;
+
+  const room = await Room.findById(roomId);
+
+  if (!room) {
+    res.status(400);
+    throw new Error("Room not found");
+  }
+
+  const messages = room.unreadConversationHistory;
+
+  if (messages.length === 0) {
+    res.status(400);
+    throw new Error("Unread message didn't found");
+  }
+
+  for (let message of messages) {
+    room.conversationHistory.push(message);
+  }
+
+  room.unreadConversationHistory = [];
+  await room.save();
+
+  res.json({ message: "Updated messages successfully" });
 });
 
 // @desc    Fetch all messages from room
@@ -161,4 +192,11 @@ const getMessages = asyncHandler(async (req, res) => {
   res.json({ messages });
 });
 
-export { addRoom, getRooms, addMessage, addUnreadMessage, getMessages };
+export {
+  addRoom,
+  getRooms,
+  addMessage,
+  addUnreadMessage,
+  addUnreadToRead,
+  getMessages,
+};
