@@ -9,6 +9,7 @@ import AwaitPick from "../base/AwaitPick";
 import SvgItem from "../base/SvgItem";
 import { sendMessageSvg } from "../../data/svg";
 import { addNewUnreadMessage } from "../../fetchers/addNewUnreadMessage";
+import UnreadMessage from "../base/UnreadMessage";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -16,6 +17,7 @@ const WebScreen = () => {
   const [typing, setTyping] = useState(false);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [arrivalMessages, setArrivalMessages] = useState([]);
+  const [arrivalUnreadMessages, setArrivalUnreadMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState(null);
   const [connected, setConnected] = useState(false);
 
@@ -95,6 +97,7 @@ const WebScreen = () => {
           setArrivalMessage={msg => setArrivalMessage(msg)}
           setCurrentDialog={setCurrentDialog}
           setArrivalMessages={setArrivalMessages}
+          setArrivalUnreadMessages={setArrivalUnreadMessages}
         />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
           {currentDialog ? (
@@ -108,6 +111,18 @@ const WebScreen = () => {
               {/* Chat */}
               <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
                 {arrivalMessages?.map(msg => (
+                  <Message
+                    own={msg.receiverId !== user.id}
+                    text={msg.text}
+                    createdAt={msg.time}
+                    key={msg.id}
+                  />
+                ))}
+                {arrivalUnreadMessages.length !== 0 &&
+                  user.id === arrivalUnreadMessages[0].receiverId && (
+                    <UnreadMessage msgNumber={arrivalUnreadMessages.length} />
+                  )}
+                {arrivalUnreadMessages?.map(msg => (
                   <Message
                     own={msg.receiverId !== user.id}
                     text={msg.text}
