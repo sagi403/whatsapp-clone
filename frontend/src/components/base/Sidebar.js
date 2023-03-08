@@ -8,7 +8,7 @@ import { useSocket } from "../../hooks/useSocket";
 import AddConversationModal from "../modals/AddConversation";
 import { addNewConversation } from "../../fetchers/addNewConversation";
 import UserMenu from "./UserMenu";
-import { addNewMessage } from "../../fetchers/addNewMessage";
+import { addUnreadToRead } from "../../fetchers/addUnreadToRead";
 
 const Sidebar = ({
   currentDialog,
@@ -69,9 +69,9 @@ const Sidebar = ({
 
     setArrivalMessages([...read, ...unread]);
 
-    // await addNewMessage({ messages: unread });
-
-    // create new route to send unread messages instead of addNewMessage
+    if (unread.length !== 0 && user.id === unread[0].receiverId) {
+      await addUnreadToRead({ roomId: dialog.roomId });
+    }
   };
 
   const handleAddConversation = () => {
