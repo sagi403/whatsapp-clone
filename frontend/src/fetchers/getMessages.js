@@ -1,14 +1,8 @@
 import axios from "axios";
 
 export const getMessages = async id => {
-  const config = { headers: { "Content-Type": "application/json" } };
-
   try {
-    const { data } = await axios.post(
-      "/api/rooms/messages",
-      { receiverId: id },
-      config
-    );
+    const { data } = await axios.get(`/api/rooms/messages/${id}`);
 
     return data.messages;
   } catch (error) {

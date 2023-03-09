@@ -169,10 +169,10 @@ const addUnreadToRead = asyncHandler(async (req, res) => {
 });
 
 // @desc    Fetch all messages from room
-// @route   POST /api/rooms/messages
+// @route   GET /api/rooms/messages/:receiverId
 // @access  Private
 const getMessages = asyncHandler(async (req, res) => {
-  const { receiverId } = req.body;
+  const { receiverId } = req.params;
   const { id } = req.user;
 
   if (receiverId === id) {
