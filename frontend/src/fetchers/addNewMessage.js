@@ -4,7 +4,7 @@ export const addNewMessage = async messages => {
   const config = { headers: { "Content-Type": "application/json" } };
 
   try {
-    const { data } = await axios.post("/api/rooms/message", messages, config);
+    const { data } = await axios.post("/api/messages", messages, config);
 
     return data.message;
   } catch (error) {

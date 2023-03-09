@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getMessages = async id => {
   try {
-    const { data } = await axios.get(`/api/rooms/messages/${id}`);
+    const { data } = await axios.get(`/api/messages/${id}`);
 
     return data.messages;
   } catch (error) {

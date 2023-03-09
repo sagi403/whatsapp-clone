@@ -4,11 +4,7 @@ export const addUnreadToRead = async roomId => {
   const config = { headers: { "Content-Type": "application/json" } };
 
   try {
-    const { data } = await axios.post(
-      "/api/rooms/message/combine",
-      roomId,
-      config
-    );
+    const { data } = await axios.post("/api/messages/combine", roomId, config);
 
     return data.message;
   } catch (error) {

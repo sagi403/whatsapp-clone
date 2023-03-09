@@ -4,11 +4,7 @@ export const addNewUnreadMessage = async messages => {
   const config = { headers: { "Content-Type": "application/json" } };
 
   try {
-    const { data } = await axios.post(
-      "/api/rooms/message/unread",
-      messages,
-      config
-    );
+    const { data } = await axios.post("/api/messages/unread", messages, config);
 
     return data.message;
   } catch (error) {

@@ -3,8 +3,8 @@ import helmet from "helmet";
 import { keys, checkEnvVariables } from "./keys.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
-import namespaceRoutes from "./routes/namespaceRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import cookieSession from "cookie-session";
 
@@ -24,8 +24,8 @@ checkEnvVariables(keys);
 connectDB();
 
 app.use("/api/users", userRoutes);
-app.use("/api/namespaces", namespaceRoutes);
 app.use("/api/rooms", roomRoutes);
+app.use("/api/messages", messageRoutes);
 
 const PORT = keys.port || 5000;
 
