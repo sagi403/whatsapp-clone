@@ -184,10 +184,18 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  const messages = {
-    read: room.conversationHistory,
-    unread: room.unreadConversationHistory,
-  };
+  // extract to external function
+  const read = room.conversationHistory.map(msg => {
+    const { receiverId, text, time } = msg;
+    return { receiverId, text, time, date: compareDates(msg.updatedAt) };
+  });
+
+  const unread = room.unreadConversationHistory.map(msg => {
+    const { receiverId, text, time } = msg;
+    return { receiverId, text, time, date: compareDates(msg.updatedAt) };
+  });
+
+  const messages = { read, unread };
 
   res.json({ messages });
 });
