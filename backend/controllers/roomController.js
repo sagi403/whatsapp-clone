@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Room from "../models/roomModel.js";
 import User from "../models/userModel.js";
 import compareDates from "../utils/compareDates.js";
+import addDateCompareToCreate from "../utils/addDateCompareToCreate.js";
 
 // @desc    Add new room
 // @route   POST /api/rooms
@@ -95,8 +96,9 @@ const addMessage = asyncHandler(async (req, res) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+  const date = new Date();
 
-  room.conversationHistory.push({ receiverId, text, time });
+  room.conversationHistory.push({ receiverId, text, time, date });
   room.lastMessage = text;
   await room.save();
 
@@ -127,8 +129,9 @@ const addUnreadMessage = asyncHandler(async (req, res) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+  const date = new Date();
 
-  room.unreadConversationHistory.push({ receiverId, text, time });
+  room.unreadConversationHistory.push({ receiverId, text, time, date });
   room.lastMessage = text;
   await room.save();
 
@@ -184,16 +187,8 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  // extract to external function
-  const read = room.conversationHistory.map(msg => {
-    const { receiverId, text, time } = msg;
-    return { receiverId, text, time, date: compareDates(msg.updatedAt) };
-  });
-
-  const unread = room.unreadConversationHistory.map(msg => {
-    const { receiverId, text, time } = msg;
-    return { receiverId, text, time, date: compareDates(msg.updatedAt) };
-  });
+  const read = addDateCompareToCreate(room.conversationHistory);
+  const unread = addDateCompareToCreate(room.unreadConversationHistory);
 
   const messages = { read, unread };
 
