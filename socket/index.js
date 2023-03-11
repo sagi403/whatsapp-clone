@@ -1,3 +1,4 @@
+const { lastVisit } = require("./config/redisPrefix");
 const randomIdGenerator = require("./utils/randomIdGenerator");
 const client = require("redis").createClient();
 
@@ -27,7 +28,7 @@ io.on("connection", nsSocket => {
     roomToLeave && nsSocket.leave(roomToLeave);
     nsSocket.join(roomId);
 
-    const receivers = JSON.parse(await client.get(sender)) || [];
+    const receivers = JSON.parse(await client.get(lastVisit(sender))) || [];
 
     if (receivers.some(user => Object.keys(user)[0] === receiver)) {
       receivers.map(user => {
@@ -41,9 +42,9 @@ io.on("connection", nsSocket => {
       receivers.push({ [receiver]: Date.now() });
     }
 
-    await client.set(sender, JSON.stringify(receivers), { EX: 60 });
+    await client.set(lastVisit(sender), JSON.stringify(receivers), { EX: 60 });
 
-    const isConnected = !!JSON.parse(await client.get(receiver));
+    const isConnected = !!JSON.parse(await client.get(lastVisit(receiver)));
 
     io.of("/").to(roomId).emit("userConnectedStatus", isConnected);
 
@@ -76,14 +77,14 @@ io.on("connection", nsSocket => {
   nsSocket.on("disconnect", async reason => {
     const userId = nsSocket.handshake.query.userId;
 
-    const receivers = JSON.parse(await client.get(userId)) || [];
+    const receivers = JSON.parse(await client.get(lastVisit(userId))) || [];
     const informUsers = receivers.map(user => Object.keys(user)[0]);
 
     informUsers.map(user => {
       io.of("/").to(user).emit("userConnectedStatus", false);
     });
 
-    await client.del(userId);
+    await client.del(lastVisit(userId));
   });
 });
 
