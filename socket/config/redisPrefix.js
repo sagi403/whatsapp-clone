@@ -2,8 +2,8 @@ const lastVisit = value => {
   return `lastVisit:${value}`;
 };
 
-const userConnected = value => {
-  return `userConnected:${value}`;
+const sameDialog = value => {
+  return `sameDialog:${value}`;
 };
 
-module.exports = { lastVisit, userConnected };
+module.exports = { lastVisit, sameDialog };

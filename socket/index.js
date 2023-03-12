@@ -1,4 +1,4 @@
-const { lastVisit, userConnected } = require("./config/redisPrefix");
+const { lastVisit, sameDialog } = require("./config/redisPrefix");
 const randomIdGenerator = require("./utils/randomIdGenerator");
 const client = require("redis").createClient();
 
@@ -21,7 +21,9 @@ io.on("connection", async nsSocket => {
   const roomToLeave = Array.from(nsSocket.rooms)[0];
   nsSocket.leave(roomToLeave);
 
-  await client.set(userConnected(userId), JSON.stringify([]), { EX: 60 });
+  await client.set(sameDialog(userId), JSON.stringify("no room"), {
+    EX: 60 * 60,
+  });
 
   nsSocket.on("joinRoom", async ({ roomId, sender, receiver }) => {
     const roomToLeave = Array.from(nsSocket.rooms)[1];
@@ -29,14 +31,18 @@ io.on("connection", async nsSocket => {
     roomToLeave && nsSocket.leave(roomToLeave);
     nsSocket.join(roomId);
 
-    const isConnected = JSON.parse(await client.get(userConnected(receiver)));
+    const prevRoom = JSON.parse(await client.get(sameDialog(sender)));
 
-    if (isConnected && !isConnected.includes(sender)) {
-      isConnected.push(sender);
-      await client.set(userConnected(receiver), JSON.stringify(isConnected), {
-        EX: 60 * 60,
-      });
+    if (prevRoom !== "no room") {
+      io.of("/").to(prevRoom).emit("userConnectedStatus", false);
     }
+
+    await client.set(sameDialog(sender), JSON.stringify(roomId), {
+      EX: 60 * 60,
+    });
+
+    const isConnected =
+      JSON.parse(await client.get(sameDialog(receiver))) === roomId;
 
     // const receivers = JSON.parse(await client.get(lastVisit(sender))) || [];
 
@@ -87,13 +93,19 @@ io.on("connection", async nsSocket => {
   nsSocket.on("disconnect", async reason => {
     const userId = nsSocket.handshake.query.userId;
 
-    const connectedToMe = JSON.parse(await client.get(userConnected(userId)));
+    const prevRoom = JSON.parse(await client.get(sameDialog(userId)));
 
-    connectedToMe.map(user => {
-      io.of("/").to(user).emit("userConnectedStatus", false);
-    });
+    if (prevRoom !== "no room") {
+      io.of("/").to(prevRoom).emit("userConnectedStatus", false);
+    }
 
-    await client.del(userConnected(userId));
+    // const connectedToMe = JSON.parse(await client.get(userConnected(userId)));
+
+    // connectedToMe?.map(user => {
+    //   io.of("/").to(user).emit("userConnectedStatus", false);
+    // });
+
+    await client.del(sameDialog(userId));
   });
 });
 
