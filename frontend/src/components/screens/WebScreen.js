@@ -110,14 +110,23 @@ const WebScreen = () => {
               />
               {/* Chat */}
               <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
-                {arrivalMessages?.map(msg => (
-                  <Message
-                    own={msg.receiverId !== user.id}
-                    text={msg.text}
-                    createdAt={msg.time}
-                    key={msg.id}
-                  />
-                ))}
+                {arrivalMessages?.map((msg, index) => {
+                  const isSameAsPrevValue =
+                    (index > 0 &&
+                      msg.date === arrivalMessages[index - 1]?.date) ||
+                    false;
+
+                  return (
+                    <Message
+                      own={msg.receiverId !== user.id}
+                      text={msg.text}
+                      createdAt={msg.time}
+                      key={msg.id}
+                      date={msg.date}
+                      isSameAsPrevValue={isSameAsPrevValue}
+                    />
+                  );
+                })}
                 {arrivalUnreadMessages.length !== 0 &&
                   user.id === arrivalUnreadMessages[0].receiverId && (
                     <UnreadMessage msgNumber={arrivalUnreadMessages.length} />
