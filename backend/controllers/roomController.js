@@ -62,6 +62,8 @@ const getRooms = asyncHandler(async (req, res) => {
       name: user.username,
       userId: user.id,
       lastMessage: room.lastMessage,
+      lastSenderId: room.lastSenderId,
+      unreadMessagesNumber: room.unreadConversationHistory.length,
       receivedAt,
       avatar: user.avatarColors,
       roomId: room.id,

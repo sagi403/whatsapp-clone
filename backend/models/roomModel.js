@@ -13,6 +13,9 @@ const roomSchema = new mongoose.Schema(
     lastMessage: {
       type: String,
     },
+    lastSenderId: {
+      type: String,
+    },
     conversationHistory: [messageSchema],
     unreadConversationHistory: [messageSchema],
   },

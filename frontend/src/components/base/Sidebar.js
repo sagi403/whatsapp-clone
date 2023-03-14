@@ -73,6 +73,7 @@ const Sidebar = ({
 
     if (unread.length !== 0 && user.id === unread[0].receiverId) {
       await addUnreadToRead({ roomId: dialog.roomId });
+      refetch();
     }
   };
 
@@ -94,7 +95,12 @@ const Sidebar = ({
                   ? arrivalMessage.text
                   : dialog.lastMessage
               }
-              unreadMessageNumber={null}
+              unreadMessagesNumber={
+                dialog.unreadMessagesNumber > 0 &&
+                dialog.lastSenderId !== user.id
+                  ? dialog.unreadMessagesNumber
+                  : null
+              }
               receivedAt={
                 dialogMessage?.senderId === dialog.userId
                   ? dialogMessage.time

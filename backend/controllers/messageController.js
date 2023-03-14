@@ -30,6 +30,7 @@ const addMessage = asyncHandler(async (req, res) => {
 
   room.conversationHistory.push({ receiverId, text, time, date });
   room.lastMessage = text;
+  room.lastSenderId = id;
   await room.save();
 
   res.json({ message: "Message added successfully" });
@@ -63,6 +64,7 @@ const addUnreadMessage = asyncHandler(async (req, res) => {
 
   room.unreadConversationHistory.push({ receiverId, text, time, date });
   room.lastMessage = text;
+  room.lastSenderId = id;
   await room.save();
 
   res.json({ message: "Unread message added successfully" });

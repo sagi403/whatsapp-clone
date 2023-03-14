@@ -3,7 +3,7 @@ import UserAvatar from "./UserAvatar";
 const Dialog = ({
   name,
   lastMessage,
-  unreadMessageNumber,
+  unreadMessagesNumber,
   avatar,
   onClick,
   receivedAt,
@@ -26,9 +26,9 @@ const Dialog = ({
           {receivedAt}
         </span>
         <div className="absolute top-9 right-4">
-          {unreadMessageNumber && (
+          {unreadMessagesNumber && (
             <p className="flex h-2 w-2 min-w-min items-center justify-center rounded-full bg-green-400 py-3 px-2 text-xs text-white">
-              {unreadMessageNumber}
+              {unreadMessagesNumber}
             </p>
           )}
         </div>
