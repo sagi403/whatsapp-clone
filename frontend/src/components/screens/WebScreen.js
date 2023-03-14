@@ -56,7 +56,9 @@ const WebScreen = () => {
 
   useEffect(() => {
     if (arrivalMessage) {
-      setArrivalMessages(prev => [...prev, arrivalMessage]);
+      arrivalUnreadMessages.length > 0
+        ? setArrivalUnreadMessages(prev => [...prev, arrivalMessage])
+        : setArrivalMessages(prev => [...prev, arrivalMessage]);
     }
   }, [arrivalMessage]);
 
@@ -131,14 +133,23 @@ const WebScreen = () => {
                   user.id === arrivalUnreadMessages[0].receiverId && (
                     <UnreadMessage msgNumber={arrivalUnreadMessages.length} />
                   )}
-                {arrivalUnreadMessages?.map(msg => (
-                  <Message
-                    own={msg.receiverId !== user.id}
-                    text={msg.text}
-                    createdAt={msg.time}
-                    key={msg.id}
-                  />
-                ))}
+                {arrivalUnreadMessages?.map((msg, index) => {
+                  const isSameAsPrevValue =
+                    (index > 0 &&
+                      msg.date === arrivalUnreadMessages[index - 1]?.date) ||
+                    false;
+
+                  return (
+                    <Message
+                      own={msg.receiverId !== user.id}
+                      text={msg.text}
+                      createdAt={msg.time}
+                      key={msg.id}
+                      date={msg.date}
+                      isSameAsPrevValue={isSameAsPrevValue}
+                    />
+                  );
+                })}
               </div>
               {/* Input message */}
               <div className="flex p-3 bg-gray-200">
