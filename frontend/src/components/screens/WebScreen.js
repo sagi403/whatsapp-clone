@@ -130,10 +130,15 @@ const WebScreen = () => {
                     />
                   );
                 })}
-                {arrivalUnreadMessages.length !== 0 &&
-                  user.id === arrivalUnreadMessages[0].receiverId && (
-                    <UnreadMessage msgNumber={arrivalUnreadMessages.length} />
-                  )}
+                {arrivalUnreadMessages.length !== 0 && (
+                  <UnreadMessage
+                    msgNumber={
+                      arrivalUnreadMessages.filter(
+                        msg => msg.receiverId === user.id
+                      ).length
+                    }
+                  />
+                )}
                 {arrivalUnreadMessages?.map((msg, index) => {
                   const isDifFromPrevValue =
                     msg.date !== lastMessageDate ||
