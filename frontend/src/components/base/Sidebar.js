@@ -17,6 +17,7 @@ const Sidebar = ({
   setCurrentDialog,
   setArrivalMessages,
   setArrivalUnreadMessages,
+  setLastMessageDate,
 }) => {
   const [conversations, setConversations] = useState([]);
   const [dialogMessage, setDialogMessage] = useState(null);
@@ -70,6 +71,10 @@ const Sidebar = ({
 
     setArrivalMessages(read);
     setArrivalUnreadMessages(unread);
+
+    unread.length !== 0
+      ? setLastMessageDate(unread[unread.length - 1].date)
+      : setLastMessageDate(read[read.length - 1].date);
 
     if (unread.length !== 0 && user.id === unread[0].receiverId) {
       await addUnreadToRead({ roomId: dialog.roomId });

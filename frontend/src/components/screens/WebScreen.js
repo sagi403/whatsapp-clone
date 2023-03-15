@@ -20,6 +20,7 @@ const WebScreen = () => {
   const [arrivalUnreadMessages, setArrivalUnreadMessages] = useState([]);
   const [currentDialog, setCurrentDialog] = useState(null);
   const [connected, setConnected] = useState(false);
+  const [lastMessageDate, setLastMessageDate] = useState("");
 
   const { user } = useAuth();
   const { socket } = useSocket();
@@ -100,6 +101,7 @@ const WebScreen = () => {
           setCurrentDialog={setCurrentDialog}
           setArrivalMessages={setArrivalMessages}
           setArrivalUnreadMessages={setArrivalUnreadMessages}
+          setLastMessageDate={setLastMessageDate}
         />
         <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
           {currentDialog ? (
@@ -113,10 +115,9 @@ const WebScreen = () => {
               {/* Chat */}
               <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
                 {arrivalMessages?.map((msg, index) => {
-                  const isSameAsPrevValue =
-                    (index > 0 &&
-                      msg.date === arrivalMessages[index - 1]?.date) ||
-                    false;
+                  const isDifFromPrevValue =
+                    index === 0 ||
+                    msg.date !== arrivalMessages[index - 1]?.date;
 
                   return (
                     <Message
@@ -125,7 +126,7 @@ const WebScreen = () => {
                       createdAt={msg.time}
                       key={msg.id}
                       date={msg.date}
-                      isSameAsPrevValue={isSameAsPrevValue}
+                      isDifFromPrevValue={isDifFromPrevValue}
                     />
                   );
                 })}
@@ -134,10 +135,10 @@ const WebScreen = () => {
                     <UnreadMessage msgNumber={arrivalUnreadMessages.length} />
                   )}
                 {arrivalUnreadMessages?.map((msg, index) => {
-                  const isSameAsPrevValue =
+                  const isDifFromPrevValue =
+                    msg.date !== lastMessageDate ||
                     (index > 0 &&
-                      msg.date === arrivalUnreadMessages[index - 1]?.date) ||
-                    false;
+                      msg.date !== arrivalUnreadMessages[index - 1]?.date);
 
                   return (
                     <Message
@@ -146,7 +147,7 @@ const WebScreen = () => {
                       createdAt={msg.time}
                       key={msg.id}
                       date={msg.date}
-                      isSameAsPrevValue={isSameAsPrevValue}
+                      isDifFromPrevValue={isDifFromPrevValue}
                     />
                   );
                 })}

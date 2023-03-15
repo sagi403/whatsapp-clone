@@ -1,7 +1,7 @@
-const Message = ({ own, text, createdAt, date, isSameAsPrevValue }) => {
+const Message = ({ own, text, createdAt, date, isDifFromPrevValue }) => {
   return (
     <>
-      {!isSameAsPrevValue && (
+      {isDifFromPrevValue && (
         <div
           className={`mx-auto bg-sky-100 py-2 px-6 rounded-lg mb-1 relative w-max clear-both lg:max-w-lg md:max-w-md sm:max-w-sm max-w-xs`}
         >
