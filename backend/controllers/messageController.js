@@ -119,7 +119,7 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error("Room not found");
   }
 
-  const read = addDateCompareToCreate(room.conversationHistory);
+  const read = addDateCompareToCreate(room.conversationHistory.slice(-10));
   const unread = addDateCompareToCreate(room.unreadConversationHistory);
 
   const messages = { read, unread };
