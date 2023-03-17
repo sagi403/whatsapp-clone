@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
@@ -22,8 +22,31 @@ const WebScreen = () => {
   const [connected, setConnected] = useState(false);
   const [lastMessageDate, setLastMessageDate] = useState("");
 
+  const jumpToRef = useRef(null);
+  const jumpToEndRef = useRef(null);
+
   const { user } = useAuth();
   const { socket } = useSocket();
+
+  const msgNumber = useMemo(
+    () =>
+      arrivalUnreadMessages.filter(msg => msg.receiverId === user.id).length,
+    [arrivalUnreadMessages, user]
+  );
+
+  useEffect(() => {
+    if (jumpToRef.current) {
+      jumpToRef.current.scrollIntoView();
+    }
+  }, [jumpToRef, arrivalUnreadMessages]);
+
+  useEffect(() => {
+    if (jumpToEndRef.current) {
+      jumpToEndRef.current.scrollTo({
+        top: jumpToEndRef.current.scrollHeight,
+      });
+    }
+  }, [jumpToEndRef, arrivalMessages, arrivalMessage, msgNumber]);
 
   useEffect(() => {
     if (socket.current) {
@@ -57,7 +80,8 @@ const WebScreen = () => {
 
   useEffect(() => {
     if (arrivalMessage) {
-      arrivalUnreadMessages.length > 0
+      arrivalUnreadMessages.length > 0 &&
+      arrivalUnreadMessages[0].receiverId === user.id
         ? setArrivalUnreadMessages(prev => [...prev, arrivalMessage])
         : setArrivalMessages(prev => [...prev, arrivalMessage]);
     }
@@ -73,6 +97,8 @@ const WebScreen = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if (message === "") return;
 
     const receiverId = currentDialog.userId;
     const msg = {
@@ -113,7 +139,10 @@ const WebScreen = () => {
                 avatar={currentDialog?.avatar}
               />
               {/* Chat */}
-              <div className="container mx-auto p-4 bg-orange-100 overflow-auto h-full">
+              <div
+                className="container mx-auto p-4 bg-orange-100 overflow-auto h-full"
+                ref={jumpToEndRef}
+              >
                 {arrivalMessages?.map((msg, index) => {
                   const isDifFromPrevValue =
                     index === 0 ||
@@ -130,14 +159,8 @@ const WebScreen = () => {
                     />
                   );
                 })}
-                {arrivalUnreadMessages.length !== 0 && (
-                  <UnreadMessage
-                    msgNumber={
-                      arrivalUnreadMessages.filter(
-                        msg => msg.receiverId === user.id
-                      ).length
-                    }
-                  />
+                {msgNumber > 0 && (
+                  <UnreadMessage msgNumber={msgNumber} jumpToRef={jumpToRef} />
                 )}
                 {arrivalUnreadMessages?.map((msg, index) => {
                   const isDifFromPrevValue =
