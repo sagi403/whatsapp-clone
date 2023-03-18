@@ -19,10 +19,20 @@ const Dialog = ({
       <div className="flex items-center">
         <UserAvatar name={name} colors={avatar} />
         <div className="h-12 w-full overflow-hidden">
-          <p className="font-medium text-lg w-10/12">{name}</p>
+          <p
+            className={`${
+              unreadMessagesNumber ? "font-medium" : "font-normal"
+            } text-lg w-10/12`}
+          >
+            {name}
+          </p>
           <p className="text-sm text-gray-500 w-11/12">{lastMessage}</p>
         </div>
-        <span className="text-xs text-gray-500 absolute top-4 right-4">
+        <span
+          className={`${
+            unreadMessagesNumber ? "text-green-600" : "text-gray-500"
+          } text-xs absolute top-4 right-4`}
+        >
           {receivedAt}
         </span>
         <div className="absolute top-9 right-4">

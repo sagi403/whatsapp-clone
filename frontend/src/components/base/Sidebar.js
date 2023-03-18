@@ -88,6 +88,13 @@ const Sidebar = ({
 
   return (
     <div className="lg:w-1/4 md:w-1/3 w-1/2 bg-white flex flex-col">
+      <div className="z-10">
+        <UserMenu
+          username={user.username}
+          avatar={user.avatarColors}
+          onClick={handleAddConversation}
+        />
+      </div>
       <div className="overflow-auto flex-1">
         <ul className="list-none p-0">
           {conversations?.map(dialog => (
@@ -121,13 +128,7 @@ const Sidebar = ({
           ))}
         </ul>
       </div>
-      <div className="border-t-2 border-gray-300">
-        <UserMenu
-          username={user.username}
-          avatar={user.avatarColors}
-          onClick={handleAddConversation}
-        />
-      </div>
+
       <AddConversationModal
         show={showAddConversationModal}
         onHide={() => setShowAddConversationModal(false)}

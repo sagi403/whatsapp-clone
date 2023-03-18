@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
@@ -140,7 +141,7 @@ const WebScreen = () => {
               />
               {/* Chat */}
               <div
-                className="container mx-auto p-4 bg-orange-100 overflow-auto h-full"
+                className="container p-4 bg-orange-100 overflow-auto h-full"
                 ref={jumpToEndRef}
               >
                 {arrivalMessages?.map((msg, index) => {
@@ -181,23 +182,19 @@ const WebScreen = () => {
                 })}
               </div>
               {/* Input message */}
-              <div className="flex p-3 bg-gray-200">
+              <div className="flex p-3">
                 <input
                   type="text"
-                  className="border border-gray-400 p-2 w-full rounded-lg"
+                  className="p-2 w-full rounded-lg"
                   placeholder="Type a message..."
                   value={message}
                   onChange={e => setMessage(e.target.value)}
                   onKeyUp={handleKeyUp}
                 />
-                <button
-                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded-lg"
-                  onClick={handleSubmit}
-                >
-                  <SvgItem
-                    icon={sendMessageSvg}
-                    viewBox="0 0 64 64"
-                    fill="white"
+                <button className="py-2 px-3" onClick={handleSubmit}>
+                  <PaperAirplaneIcon
+                    className="h-7 w-7 text-gray-500"
+                    aria-hidden="true"
                   />
                 </button>
               </div>
