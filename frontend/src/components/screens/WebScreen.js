@@ -7,8 +7,6 @@ import { useSocket } from "../../hooks/useSocket";
 import Sidebar from "../base/Sidebar";
 import { addNewMessage } from "../../fetchers/addNewMessage";
 import AwaitPick from "../base/AwaitPick";
-import SvgItem from "../base/SvgItem";
-import { sendMessageSvg } from "../../data/svg";
 import { addNewUnreadMessage } from "../../fetchers/addNewUnreadMessage";
 import UnreadMessage from "../base/UnreadMessage";
 
@@ -136,7 +134,9 @@ const WebScreen = () => {
               {/* User headline */}
               <UserHeader
                 name={currentDialog?.name}
-                lastConnected={typing ? "Typing..." : connected && "Connected"}
+                lastConnected={
+                  connected ? (typing ? "Typing..." : "Connected") : null
+                }
                 avatar={currentDialog?.avatar}
               />
               {/* Chat */}
