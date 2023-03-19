@@ -141,7 +141,8 @@ const WebScreen = () => {
               />
               {/* Chat */}
               <div
-                className="container p-4 bg-orange-100 overflow-auto h-full"
+                className="container pb-2 overflow-auto h-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${"./wallpaper.png"})` }}
                 ref={jumpToEndRef}
               >
                 {arrivalMessages?.map((msg, index) => {
