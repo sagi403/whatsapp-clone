@@ -117,8 +117,10 @@ const WebScreen = () => {
   };
 
   return (
-    <>
-      <div className="container mx-auto h-screen flex">
+    <div className="h-screen relative">
+      <div className="h-1/6 bg-green-600"></div>
+      <div className="h-5/6 bg-gray-300"></div>
+      <div className="absolute inset-x-0 top-0 container mx-auto h-full flex py-5">
         <Sidebar
           currentDialog={currentDialog}
           arrivalMessage={arrivalMessage}
@@ -128,7 +130,7 @@ const WebScreen = () => {
           setArrivalUnreadMessages={setArrivalUnreadMessages}
           setLastMessageDate={setLastMessageDate}
         />
-        <div className="lg:w-3/4 md:w-3/4 w-1/2 h-screen">
+        <div className="lg:w-3/4 md:w-3/4 w-1/2 h-full">
           {currentDialog ? (
             <div className="flex flex-col h-full">
               {/* User headline */}
@@ -183,7 +185,7 @@ const WebScreen = () => {
                 })}
               </div>
               {/* Input message */}
-              <div className="flex p-3">
+              <div className="flex p-3 bg-gray-200">
                 <input
                   type="text"
                   className="p-2 w-full rounded-lg"
@@ -205,7 +207,7 @@ const WebScreen = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -12,8 +12,8 @@ const Dialog = ({
   return (
     <li
       className={`${
-        active && "bg-gray-400"
-      } py-3 px-4 border-b border-gray-300 relative cursor-pointer hover:bg-gray-400`}
+        active && "bg-gray-200"
+      } py-3 px-4 border-b border-gray-300 relative cursor-pointer hover:bg-gray-200`}
       onClick={onClick}
     >
       <div className="flex items-center">
