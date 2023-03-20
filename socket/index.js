@@ -78,7 +78,7 @@ io.on("connection", async nsSocket => {
         minute: "2-digit",
       }),
       id: randomIdGenerator(),
-      date: "Today",
+      date: "TODAY",
     };
 
     const room = Array.from(nsSocket.rooms)[1];

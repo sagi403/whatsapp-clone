@@ -10,7 +10,7 @@ const Message = ({ own, text, createdAt, date, isDifFromPrevValue }) => {
       )}
       <div
         className={`${
-          own ? "ml-auto mr-2 bg-green-200" : "mr-auto ml-2 bg-white"
+          own ? "ml-auto mr-8 bg-green-200" : "mr-auto ml-8 bg-white"
         } py-2 pl-3 pr-10 rounded-lg mb-1 relative w-max clear-both lg:max-w-lg md:max-w-md sm:max-w-sm max-w-xs`}
       >
         <span className="pr-1.5">{text}</span>

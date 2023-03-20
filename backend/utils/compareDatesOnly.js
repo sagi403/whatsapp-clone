@@ -15,13 +15,13 @@ const compareDatesOnly = date => {
     todayMonth === dateMonth &&
     todayDay === dateDay
   ) {
-    return "Today";
+    return "TODAY";
   } else if (
     todayYear === dateYear &&
     todayMonth === dateMonth &&
     dateDay === yesterday
   ) {
-    return "Yesterday";
+    return "YESTERDAY";
   } else {
     return date.toLocaleDateString("en-GB");
   }

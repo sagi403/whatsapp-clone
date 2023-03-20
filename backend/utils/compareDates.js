@@ -25,7 +25,7 @@ const compareDates = date => {
     todayMonth === dateMonth &&
     dateDay === yesterday
   ) {
-    return "Yesterday";
+    return "YESTERDAY";
   } else {
     return date.toLocaleDateString("en-GB");
   }

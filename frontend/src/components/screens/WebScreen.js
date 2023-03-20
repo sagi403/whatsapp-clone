@@ -188,8 +188,9 @@ const WebScreen = () => {
               <div className="flex p-3 bg-gray-200">
                 <input
                   type="text"
-                  className="p-2 w-full rounded-lg"
+                  className="p-2 w-full rounded-lg focus:outline-none shadow-input shadow-gray-300"
                   placeholder="Type a message..."
+                  autoFocus
                   value={message}
                   onChange={e => setMessage(e.target.value)}
                   onKeyUp={handleKeyUp}

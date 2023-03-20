@@ -3,7 +3,7 @@ import { passwordSvg } from "../../data/svg";
 
 const AwaitPick = () => {
   return (
-    <div className="flex flex-col justify-center h-full bg-gray-100">
+    <div className="flex flex-col justify-center h-full bg-gray-100 border-b-4 border-green-500">
       <div className="flex-grow flex flex-col justify-center items-center text-center">
         <p className="font-extralight text-4xl p-4 text-gray-600">
           WhatsApp Clone
