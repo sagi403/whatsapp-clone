@@ -79,8 +79,7 @@ const WebScreen = () => {
 
   useEffect(() => {
     if (arrivalMessage) {
-      arrivalUnreadMessages.length > 0 &&
-      arrivalUnreadMessages[0].receiverId === user.id
+      arrivalUnreadMessages.length > 0
         ? setArrivalUnreadMessages(prev => [...prev, arrivalMessage])
         : setArrivalMessages(prev => [...prev, arrivalMessage]);
     }
@@ -120,7 +119,7 @@ const WebScreen = () => {
     <div className="h-screen relative">
       <div className="h-1/6 bg-green-600"></div>
       <div className="h-5/6 bg-gray-300"></div>
-      <div className="absolute inset-x-0 top-0 container mx-auto h-full flex py-5">
+      <div className="absolute inset-x-0 bottom-5 pt-10 container mx-auto h-full flex shadow-2xl">
         <Sidebar
           currentDialog={currentDialog}
           arrivalMessage={arrivalMessage}

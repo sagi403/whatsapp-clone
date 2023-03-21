@@ -12,7 +12,7 @@ const Dialog = ({
   return (
     <li
       className={`${
-        active && "bg-gray-200"
+        active && "bg-gray-200 shadow-md"
       } py-3 px-4 border-b border-gray-300 relative cursor-pointer hover:bg-gray-200`}
       onClick={onClick}
     >
