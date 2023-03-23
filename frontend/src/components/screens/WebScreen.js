@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
-import Message from "../base/Message";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
 import { useSocket } from "../../hooks/useSocket";
@@ -9,6 +8,8 @@ import { addNewMessage } from "../../fetchers/addNewMessage";
 import AwaitPick from "../base/AwaitPick";
 import { addNewUnreadMessage } from "../../fetchers/addNewUnreadMessage";
 import UnreadMessage from "../base/UnreadMessage";
+import useMessages from "../../hooks/useMessages";
+import useUnreadMessages from "../../hooks/useUnreadMessages";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -27,10 +28,11 @@ const WebScreen = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
 
-  const msgNumber = useMemo(
-    () =>
-      arrivalUnreadMessages.filter(msg => msg.receiverId === user.id).length,
-    [arrivalUnreadMessages, user]
+  const { renderedMessages } = useMessages(arrivalMessages, user.id);
+  const { renderedUnreadMessages, msgNumber } = useUnreadMessages(
+    arrivalUnreadMessages,
+    lastMessageDate,
+    user.id
   );
 
   useEffect(() => {
@@ -146,42 +148,11 @@ const WebScreen = () => {
                 style={{ backgroundImage: `url(${"./wallpaper.png"})` }}
                 ref={jumpToEndRef}
               >
-                {arrivalMessages?.map((msg, index) => {
-                  const isDifFromPrevValue =
-                    index === 0 ||
-                    msg.date !== arrivalMessages[index - 1]?.date;
-
-                  return (
-                    <Message
-                      own={msg.receiverId !== user.id}
-                      text={msg.text}
-                      createdAt={msg.time}
-                      key={msg.id}
-                      date={msg.date}
-                      isDifFromPrevValue={isDifFromPrevValue}
-                    />
-                  );
-                })}
+                {renderedMessages}
                 {msgNumber > 0 && (
                   <UnreadMessage msgNumber={msgNumber} jumpToRef={jumpToRef} />
                 )}
-                {arrivalUnreadMessages?.map((msg, index) => {
-                  const isDifFromPrevValue =
-                    msg.date !== lastMessageDate ||
-                    (index > 0 &&
-                      msg.date !== arrivalUnreadMessages[index - 1]?.date);
-
-                  return (
-                    <Message
-                      own={msg.receiverId !== user.id}
-                      text={msg.text}
-                      createdAt={msg.time}
-                      key={msg.id}
-                      date={msg.date}
-                      isDifFromPrevValue={isDifFromPrevValue}
-                    />
-                  );
-                })}
+                {renderedUnreadMessages}
               </div>
               {/* Input message */}
               <div className="flex p-3 bg-gray-200">
