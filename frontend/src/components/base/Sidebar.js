@@ -9,6 +9,7 @@ import AddConversationModal from "../modals/AddConversation";
 import { addNewConversation } from "../../fetchers/addNewConversation";
 import UserMenu from "./UserMenu";
 import { addUnreadToRead } from "../../fetchers/addUnreadToRead";
+import getDialogProperties from "../../utils/getDialogProperties";
 
 const Sidebar = ({
   currentDialog,
@@ -97,35 +98,23 @@ const Sidebar = ({
       </div>
       <div className="overflow-auto flex-1">
         <ul className="list-none p-0">
-          {conversations?.map(dialog => (
-            <Dialog
-              name={dialog.name}
-              lastMessage={
-                dialogMessage?.senderId === dialog.userId
-                  ? dialogMessage.text
-                  : arrivalMessage?.receiverId === dialog.userId
-                  ? arrivalMessage.text
-                  : dialog.lastMessage
-              }
-              unreadMessagesNumber={
-                dialog.unreadMessagesNumber > 0 &&
-                dialog.lastSenderId !== user.id
-                  ? dialog.unreadMessagesNumber
-                  : null
-              }
-              receivedAt={
-                dialogMessage?.senderId === dialog.userId
-                  ? dialogMessage.time
-                  : arrivalMessage?.receiverId === dialog.userId
-                  ? arrivalMessage.time
-                  : dialog.receivedAt
-              }
-              avatar={dialog.avatar}
-              key={dialog.userId}
-              active={currentDialog?.userId === dialog.userId}
-              onClick={() => handleDialogClick(dialog)}
-            />
-          ))}
+          {conversations?.map(dialog => {
+            const { lastMessage, unreadMessagesNumber, receivedAt } =
+              getDialogProperties(dialog, dialogMessage, arrivalMessage, user);
+
+            return (
+              <Dialog
+                name={dialog.name}
+                lastMessage={lastMessage}
+                unreadMessagesNumber={unreadMessagesNumber}
+                receivedAt={receivedAt}
+                avatar={dialog.avatar}
+                key={dialog.userId}
+                active={currentDialog?.userId === dialog.userId}
+                onClick={() => handleDialogClick(dialog)}
+              />
+            );
+          })}
         </ul>
       </div>
 
