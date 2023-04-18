@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+import { toWei } from "ethers/lib/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import UserHeader from "../base/UserHeader";
@@ -21,6 +23,7 @@ const WebScreen = () => {
   const [currentDialog, setCurrentDialog] = useState(null);
   const [connected, setConnected] = useState(false);
   const [lastMessageDate, setLastMessageDate] = useState("");
+  const [etherAmount, setEtherAmount] = useState("");
 
   const jumpToRef = useRef(null);
   const jumpToEndRef = useRef(null);
@@ -117,6 +120,33 @@ const WebScreen = () => {
     setStartTyping(false);
   };
 
+  const handleSendEther = async () => {
+    try {
+      // Set up the provider using MetaMask
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+
+      // Retrieve the connected wallet address
+      const signer = provider.getSigner();
+      const senderAddress = await signer.getAddress();
+
+      // Define the transaction
+      const transaction = {
+        to: currentDialog.userAddress, // Replace this with the receiver's Ethereum address
+        value: toWei(etherAmount, "ether"), // Convert the amount from Ether to Wei
+      };
+
+      // Send the transaction
+      const tx = await signer.sendTransaction(transaction);
+      console.log("Transaction sent:", tx.hash);
+
+      // Reset the Ether amount input field
+      setEtherAmount("");
+    } catch (error) {
+      console.error("Error sending Ether:", error);
+    }
+  };
+
   return (
     <div className="h-screen relative">
       <div className="h-1/6 bg-green-600"></div>
@@ -156,6 +186,10 @@ const WebScreen = () => {
               </div>
               {/* Input message */}
               <div className="flex p-3 bg-gray-200">
+                <button className="py-2 px-3 ml-2" onClick={handleSendEther}>
+                  Send Ether
+                </button>
+
                 <input
                   type="text"
                   className="p-2 w-full rounded-lg focus:outline-none shadow-input shadow-gray-300"
