@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    etherAddress: {
+      type: String,
+    },
     avatarColors: {
       type: Array,
       required: true,
