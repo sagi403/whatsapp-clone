@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { toWei } from "ethers/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import UserHeader from "../base/UserHeader";
@@ -121,6 +120,8 @@ const WebScreen = () => {
   };
 
   const handleSendEther = async etherAmount => {
+    const amount = (etherAmount * 0.00001).toString();
+
     try {
       // Set up the provider using MetaMask
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -128,17 +129,19 @@ const WebScreen = () => {
 
       // Retrieve the connected wallet address
       const signer = provider.getSigner();
-      const senderAddress = await signer.getAddress();
 
       // Define the transaction
       const transaction = {
-        to: currentDialog.userAddress, // Replace this with the receiver's Ethereum address
-        value: toWei(etherAmount, "ether"), // Convert the amount from Ether to Wei
+        to: currentDialog.etherAddress, // Replace this with the receiver's Ethereum address
+        value: ethers.utils.parseEther(amount), // Convert the amount from Ether to Wei
       };
 
       // Send the transaction
       const tx = await signer.sendTransaction(transaction);
-      console.log("Transaction sent:", tx.hash);
+      // console.log("Transaction sent:", tx.hash);
+
+      const txReceipt = await provider.waitForTransaction(tx.hash);
+      console.log(txReceipt);
 
       // Reset the Ether amount input field
     } catch (error) {
