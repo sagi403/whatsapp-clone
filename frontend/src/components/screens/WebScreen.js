@@ -12,6 +12,7 @@ import UnreadMessage from "../base/UnreadMessage";
 import useMessages from "../../hooks/useMessages";
 import useUnreadMessages from "../../hooks/useUnreadMessages";
 import SendOptions from "../base/SendOptions";
+import { handleSendEther } from "../../utils/handleSendEther";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -119,36 +120,6 @@ const WebScreen = () => {
     setStartTyping(false);
   };
 
-  const handleSendEther = async etherAmount => {
-    const amount = (etherAmount * 0.00001).toString();
-
-    try {
-      // Set up the provider using MetaMask
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-
-      // Retrieve the connected wallet address
-      const signer = provider.getSigner();
-
-      // Define the transaction
-      const transaction = {
-        to: currentDialog.etherAddress, // Replace this with the receiver's Ethereum address
-        value: ethers.utils.parseEther(amount), // Convert the amount from Ether to Wei
-      };
-
-      // Send the transaction
-      const tx = await signer.sendTransaction(transaction);
-      // console.log("Transaction sent:", tx.hash);
-
-      const txReceipt = await provider.waitForTransaction(tx.hash);
-      console.log(txReceipt);
-
-      // Reset the Ether amount input field
-    } catch (error) {
-      console.error("Error sending Ether:", error);
-    }
-  };
-
   return (
     <div className="h-screen relative">
       <div className="h-1/6 bg-green-600"></div>
@@ -188,7 +159,11 @@ const WebScreen = () => {
               </div>
               {/* Input message */}
               <div className="flex p-3 bg-gray-200">
-                <SendOptions handleSendEther={handleSendEther} />
+                <SendOptions
+                  handleSendEther={etherAmount =>
+                    handleSendEther(etherAmount, currentDialog.etherAddress)
+                  }
+                />
                 <input
                   type="text"
                   className="p-2 w-full rounded-lg focus:outline-none shadow-input shadow-gray-300"
