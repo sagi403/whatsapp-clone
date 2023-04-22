@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ethers } from "ethers";
+import { useEffect, useRef, useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import UserHeader from "../base/UserHeader";
 import { useAuth } from "../../hooks/useAuth";
@@ -10,6 +11,8 @@ import { addNewUnreadMessage } from "../../fetchers/addNewUnreadMessage";
 import UnreadMessage from "../base/UnreadMessage";
 import useMessages from "../../hooks/useMessages";
 import useUnreadMessages from "../../hooks/useUnreadMessages";
+import SendOptions from "../base/SendOptions";
+import { handleSendEther } from "../../utils/handleSendEther";
 
 const WebScreen = () => {
   const [message, setMessage] = useState("");
@@ -156,6 +159,11 @@ const WebScreen = () => {
               </div>
               {/* Input message */}
               <div className="flex p-3 bg-gray-200">
+                <SendOptions
+                  handleSendEther={etherAmount =>
+                    handleSendEther(etherAmount, currentDialog.etherAddress)
+                  }
+                />
                 <input
                   type="text"
                   className="p-2 w-full rounded-lg focus:outline-none shadow-input shadow-gray-300"

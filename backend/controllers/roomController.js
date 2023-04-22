@@ -67,6 +67,7 @@ const getRooms = asyncHandler(async (req, res) => {
       receivedAt,
       avatar: user.avatarColors,
       roomId: room.id,
+      etherAddress: user.etherAddress,
     };
   });
 

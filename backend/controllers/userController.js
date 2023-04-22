@@ -7,7 +7,7 @@ import generateAvatar from "../utils/generateAvatar.js";
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, etherAddress } = req.body;
 
   const userExists = await User.findOne({ email });
   const usernameExists = await User.findOne({ username });
@@ -22,6 +22,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     avatarColors: generateAvatar(),
+    etherAddress,
   });
 
   req.session = { jwt: generateToken({ id: user.id, isAdmin: user.isAdmin }) };
